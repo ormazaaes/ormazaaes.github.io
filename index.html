@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hybrid Athlete Training Library — @ormazaaes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream:#f2ede4; --cream2:#ebe5da; --cream3:#e4ddd1;
+  --ink:#1a1a16; --ink2:#3a3a32; --muted:#8a8a78;
+  --green:#2c4a2e; --green2:#3d6b40; --green-lt:#e8f0e8;
+  --rule:#c8c0b0;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--cream);color:var(--ink);font-family:'Inter',system-ui,sans-serif;font-weight:300;line-height:1.6;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:1000;opacity:.6;}
+
+/* HEADER */
+.site-header{padding:32px 56px;border-bottom:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+.header-left{display:flex;align-items:baseline;gap:28px;flex-wrap:wrap;}
+.site-wordmark{font-family:'Cormorant Garamond',Georgia,serif;font-size:20px;font-weight:300;letter-spacing:.04em;}
+.site-wordmark em{font-style:italic;color:var(--green);}
+.site-handle{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.05em;}
+.header-nav{display:flex;gap:0;overflow-x:auto;}
+.nav-tab{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:10px 18px;cursor:pointer;background:none;border:none;border-bottom:1px solid transparent;transition:all .2s;white-space:nowrap;position:relative;}
+.nav-tab:hover{color:var(--ink);}
+.nav-tab.active{color:var(--green);border-bottom-color:var(--green);}
+
+/* SECTIONS */
+.section{display:none;}
+.section.active{display:block;}
+
+/* SHARED COMPONENTS */
+.section-intro{padding:56px 56px 48px;border-bottom:1px solid var(--rule);}
+.intro-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:end;}
+.big-title{font-family:'Cormorant Garamond',Georgia,serif;font-size:clamp(40px,6vw,68px);font-weight:300;line-height:.92;letter-spacing:-.01em;}
+.big-title em{font-style:italic;color:var(--green);}
+.intro-sub{font-size:15px;color:var(--ink2);line-height:1.7;}
+.intro-stats{display:flex;gap:36px;margin-top:20px;}
+.stat-n{font-size:48px;font-weight:300;color:var(--green);line-height:1;}
+.stat-l{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+
+.scroll-nav{display:flex;gap:0;border-bottom:1px solid var(--rule);padding:0 56px;overflow-x:auto;}
+.scroll-btn{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:18px 20px;cursor:pointer;background:none;border:none;border-bottom:1px solid transparent;white-space:nowrap;transition:all .2s;margin-bottom:-1px;}
+.scroll-btn:hover{color:var(--ink);}
+.scroll-btn.active{color:var(--green);border-bottom-color:var(--green);}
+
+.sub-content{display:none;}
+.sub-content.active{display:block;}
+
+/* WEEK HERO */
+.week-hero{padding:48px 56px 40px;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:120px 1fr;gap:32px;align-items:end;}
+.week-num{font-size:110px;font-weight:300;color:var(--cream3);line-height:1;}
+.week-title{font-family:'Cormorant Garamond',Georgia,serif;font-size:clamp(32px,5vw,52px);font-weight:300;line-height:1;margin-bottom:12px;}
+.week-title em{font-style:italic;color:var(--green);}
+.week-goal{font-size:15px;font-style:italic;color:var(--muted);line-height:1.6;}
+
+/* SESSION GRID */
+.session-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1px;background:var(--rule);}
+.session-card{background:var(--cream);padding:32px 28px 28px;transition:background .2s;}
+.session-card:hover{background:var(--cream2);}
+.card-day{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.card-title{font-family:'Cormorant Garamond',Georgia,serif;font-size:22px;font-weight:300;line-height:1.15;margin-bottom:8px;}
+.card-title em{font-style:italic;color:var(--green);}
+.card-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px;}
+.tag{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;padding:3px 9px;border:1px solid var(--rule);color:var(--muted);}
+.tag-g{border-color:var(--green);color:var(--green);}
+.card-rule{width:100%;height:1px;background:var(--rule);margin-bottom:18px;}
+
+/* EXERCISE LIST */
+.ex-list{list-style:none;}
+.ex-item{display:grid;grid-template-columns:20px 1fr auto;gap:12px;align-items:baseline;padding:11px 0;border-bottom:1px solid var(--rule);}
+.ex-item:last-child{border-bottom:none;}
+.ex-num{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;}
+.ex-name{font-size:14px;font-weight:400;color:var(--ink);line-height:1.3;}
+.ex-name small{display:block;font-size:12px;color:var(--muted);margin-top:2px;font-style:normal;}
+.ex-vol{font-family:'DM Mono',monospace;font-size:11px;color:var(--green);text-align:right;white-space:nowrap;}
+.ex-rest{font-size:10px;color:var(--muted);text-align:right;margin-top:2px;}
+
+/* CARD NOTE */
+.card-note{margin-top:18px;padding:14px 18px;background:var(--green-lt);border-left:2px solid var(--green);}
+.note-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin-bottom:6px;}
+.note-text{font-size:13px;color:var(--green);line-height:1.6;}
+
+/* INFO BOX */
+.info-box{margin-top:14px;padding:12px 16px;border:1px solid var(--rule);background:var(--cream2);font-size:13px;color:var(--ink2);line-height:1.6;}
+.info-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-style:normal;margin-bottom:5px;display:block;}
+
+/* BLOCK LABEL */
+.blk-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin:14px 0 8px;}
+
+/* TOGGLE */
+.card-toggle{width:100%;background:none;border:none;border-top:1px solid var(--rule);padding:12px 0 0;margin-top:18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);transition:color .2s;}
+.card-toggle:hover{color:var(--green);}
+.tog-arrow{font-size:9px;transition:transform .2s;}
+.tog-arrow.open{transform:rotate(90deg);}
+.card-body{display:none;padding-top:18px;}
+.card-body.open{display:block;}
+
+/* LOCKED CARD */
+.card-locked{background:var(--cream2);border:1px dashed var(--rule);padding:32px 28px;display:flex;flex-direction:column;justify-content:center;}
+.lock-title{font-size:20px;font-weight:300;color:var(--muted);margin-bottom:6px;}
+.lock-sub{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--rule);}
+
+/* STANDALONE / MOOD */
+.free-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1px;background:var(--rule);}
+.free-card{background:var(--cream);padding:28px;transition:background .2s;}
+.free-card:hover{background:var(--cream2);}
+.free-card.hidden{display:none;}
+.free-title{font-size:20px;font-weight:300;color:var(--ink);margin-bottom:18px;line-height:1.2;}
+
+/* CAT NAV */
+.cat-nav{display:flex;gap:0;border-bottom:1px solid var(--rule);padding:0 56px;overflow-x:auto;}
+.cat-btn{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:18px 18px;cursor:pointer;background:none;border:none;border-bottom:1px solid transparent;white-space:nowrap;transition:all .2s;margin-bottom:-1px;}
+.cat-btn:hover{color:var(--ink);}
+.cat-btn.active{color:var(--green);border-bottom-color:var(--green);}
+
+/* MOOD CARDS */
+.mood-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);}
+.mood-card{background:var(--cream);padding:44px 28px 36px;cursor:pointer;transition:background .25s;text-align:center;position:relative;}
+.mood-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--green);transform:scaleX(0);transition:transform .25s;}
+.mood-card:hover{background:var(--cream2);}
+.mood-card:hover::after{transform:scaleX(1);}
+.mood-num{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--muted);margin-bottom:18px;}
+.mood-name{font-family:'Cormorant Garamond',Georgia,serif;font-size:32px;font-weight:300;color:var(--ink);line-height:1;margin-bottom:10px;}
+.mood-line{width:20px;height:1px;background:var(--rule);margin:14px auto;}
+.mood-desc{font-size:13px;font-style:italic;color:var(--muted);line-height:1.5;}
+
+/* MOOD DETAIL */
+.mood-detail{display:none;border-top:1px solid var(--rule);}
+.mood-detail.visible{display:block;}
+.mood-dh{padding:24px 56px;border-bottom:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between;background:var(--cream2);}
+.mood-dh-title{font-size:20px;font-weight:300;}
+.mood-dh-title em{font-style:italic;color:var(--green);}
+.mood-back{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);cursor:pointer;background:none;border:none;transition:color .2s;}
+.mood-back:hover{color:var(--green);}
+.mood-phil{padding:32px 56px;background:var(--green-lt);border-left:3px solid var(--green);}
+.mood-phil-text{font-size:15px;color:var(--green);line-height:1.7;max-width:640px;}
+.mood-phil-text strong{font-style:normal;font-weight:600;}
+.mood-body{display:grid;grid-template-columns:1fr 1fr;}
+.mood-workout{padding:44px 56px 60px;border-right:1px solid var(--rule);}
+.mood-music{padding:44px 56px 60px;background:var(--cream2);}
+.col-lbl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:28px;display:flex;align-items:center;gap:14px;}
+.col-lbl::after{content:'';flex:1;height:1px;background:var(--rule);}
+.music-desc{font-size:17px;font-style:italic;color:var(--ink2);line-height:1.7;margin-bottom:24px;}
+.spotify-btn{display:inline-flex;align-items:center;gap:10px;background:var(--green);color:var(--cream);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:11px 22px;text-decoration:none;transition:background .2s;border:none;cursor:pointer;}
+.spotify-btn:hover{background:var(--green2);}
+.bpm-row{margin-top:36px;padding-top:28px;border-top:1px solid var(--rule);display:flex;align-items:baseline;gap:10px;}
+.bpm-n{font-size:68px;font-weight:300;color:var(--green);line-height:1;}
+.bpm-l{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.artists{list-style:none;margin-top:28px;padding-top:28px;border-top:1px solid var(--rule);}
+.artist-item{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--rule);font-size:17px;color:var(--ink2);}
+.artist-item:last-child{border-bottom:none;}
+.artist-dot{width:4px;height:4px;border-radius:50%;background:var(--green);flex-shrink:0;}
+
+/* LOG */
+.log-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1px;background:var(--rule);padding:0;}
+.log-card{background:var(--cream);padding:32px 28px;}
+.log-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:18px;}
+.log-entry{display:flex;justify-content:space-between;align-items:baseline;padding:11px 0;border-bottom:1px solid var(--rule);}
+.log-entry:last-child{border-bottom:none;}
+.log-week{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;}
+.log-val{font-size:22px;font-weight:300;color:var(--ink);}
+.log-val em{font-style:italic;color:var(--green);font-size:17px;}
+.log-delta{font-family:'DM Mono',monospace;font-size:10px;color:var(--green);margin-left:6px;}
+
+/* BENCHMARKS */
+.bench-table{width:100%;border-collapse:collapse;font-size:15px;}
+.bench-table th{text-align:left;padding:12px 16px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;background:var(--green);color:#fff;font-weight:400;}
+.bench-table td{padding:12px 16px;border-bottom:1px solid var(--rule);color:var(--ink);}
+.bench-table tr:nth-child(even) td{background:var(--cream2);}
+.bench-table td:last-child{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);}
+
+/* GLOSSARY */
+.glossary-table{width:100%;border-collapse:collapse;font-size:15px;}
+.glossary-table th{text-align:left;padding:12px 16px;background:var(--cream2);font-size:11px;font-weight:400;color:var(--muted);border-bottom:1px solid var(--rule);}
+.glossary-table td{padding:12px 16px;border-bottom:1px solid var(--rule);vertical-align:top;}
+.glossary-table tr:nth-child(even) td{background:var(--cream2);}
+.glossary-table td:first-child{font-family:'DM Mono',monospace;font-size:11px;color:var(--green);white-space:nowrap;padding-right:24px;}
+
+/* SCHEDULE TABLE */
+.schedule-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px;}
+.schedule-table th{background:var(--green);color:#fff;padding:10px 12px;text-align:left;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:400;}
+.schedule-table td{padding:10px 12px;border-bottom:1px solid var(--rule);color:var(--ink);}
+.schedule-table tr:nth-child(even) td{background:var(--cream2);}
+.schedule-table td:first-child{font-weight:500;color:var(--green);}
+
+/* FOOTER */
+.site-footer{padding:28px 56px;border-top:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between;}
+.footer-copy{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;}
+
+/* RUNNING SESSIONS */
+.run-block{padding:28px 0;border-bottom:1px solid var(--rule);}
+.run-block:last-child{border-bottom:none;}
+.run-title{font-size:18px;font-weight:400;color:var(--ink);margin-bottom:6px;}
+.run-detail{font-size:13px;color:var(--ink2);line-height:1.7;}
+.run-detail span{color:var(--muted);font-style:italic;}
+
+/* SCHEDULE TABLE */
+.schedule-table{width:100%;border-collapse:collapse;font-size:14px;margin-bottom:28px;}
+.schedule-table th{background:var(--green);color:#fff;padding:10px 12px;text-align:left;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:400;}
+.schedule-table td{padding:10px 12px;border-bottom:1px solid var(--rule);}
+.schedule-table tr:nth-child(even) td{background:var(--cream2);}
+.schedule-table td:first-child{font-family:'DM Mono',monospace;font-size:11px;color:var(--green);}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .site-header{padding:20px;}
+  .section-intro{padding:36px 20px;}
+  .intro-grid{grid-template-columns:1fr;gap:24px;}
+  .scroll-nav,.cat-nav{padding:0 20px;}
+  .week-hero{padding:32px 20px;grid-template-columns:1fr;gap:8px;}
+  .week-num{font-size:72px;}
+  .session-grid,.free-grid,.log-grid{grid-template-columns:1fr;}
+  .session-card,.free-card,.log-card{padding:24px 20px;}
+  .mood-grid{grid-template-columns:1fr 1fr;}
+  .mood-card{padding:28px 16px 24px;}
+  .mood-dh{padding:18px 20px;}
+  .mood-phil{padding:24px 20px;}
+  .mood-body{grid-template-columns:1fr;}
+  .mood-workout{padding:28px 20px 36px;border-right:none;border-bottom:1px solid var(--rule);}
+  .mood-music{padding:28px 20px 40px;}
+  .site-footer{padding:20px;flex-direction:column;gap:8px;text-align:center;}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-left">
+    <div class="site-wordmark">Hybrid Athlete <em>Training Library</em></div>
+    <div class="site-handle">@ormazaaes · Byron Bay</div>
+  </div>
+  <nav class="header-nav">
+    <button class="nav-tab active" onclick="switchTab('programme',this)">Programme</button>
+    <button class="nav-tab" onclick="switchTab('standalone',this)">Standalone</button>
+    <button class="nav-tab" onclick="switchTab('mood',this)">Train by Mood</button>
+    <button class="nav-tab" onclick="switchTab('glossary',this)">Glossary</button>
+  </nav>
+</header>
+
+
+<!-- ═══════════════════════════════
+     PROGRAMME
+═══════════════════════════════ -->
+<div class="section active" id="section-programme">
+
+  <div class="section-intro">
+    <div class="intro-grid">
+      <div class="big-title">Hybrid Athlete<br><em>Month 1</em><br>Training Plan</div>
+      <div>
+        <p class="intro-sub" style="margin-bottom:20px;">I built this because I couldn't find a training program that worked the way I wanted. I was looking for something hybrid, functional, and most importantly, fun. I'm not the kind of person who enjoys going to the gym just to train two muscle groups and leave.</p>
+        <p class="intro-sub" style="margin-bottom:20px;">I enjoy training in different formats — mixing strength, conditioning, running, power, and functional work. The kind of training that keeps you motivated and actually feels good to do. This is how I program my own training.</p>
+        <p class="intro-sub" style="margin-bottom:20px;">I spent 4 years doing CrossFit, now I'm into HYROX — and in the future, who knows. For now, these are my sessions. I hope you enjoy them.</p>
+        <p class="intro-sub" style="margin-bottom:24px;"><em>Follow the 4-week progression if you want structure. Pick from Standalone Sessions if you just need something for today. Use Train by Mood when your energy decides for you. The program works either way.</em></p>
+        <div class="card-note" style="margin-bottom:24px;"><div class="note-lbl">Missed a session?</div><div class="note-text">Skip it and continue from where you left off. Don't double up. Don't feel guilty. Just go again.</div></div>
+        <p style="font-size:13px;color:var(--muted);font-style:italic;">— Stiven · @ormazaaes · Byron Bay</p>
+        <div class="intro-stats" style="margin-top:24px;">
+          <div><div class="stat-n">4</div><div class="stat-l">Weeks live</div></div>
+          <div><div class="stat-n">4</div><div class="stat-l">Sessions/week</div></div>
+          <div><div class="stat-n">Free</div><div class="stat-l">Always</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:0 56px 48px;border-bottom:1px solid var(--rule);">
+    <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;">Weekly structure</div>
+    <table class="schedule-table">
+      <thead><tr><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th></tr></thead>
+      <tbody>
+        <tr><td>Push</td><td>HYROX</td><td>Rest / Run</td><td>Legs</td><td>Pull</td><td>Long run</td><td>Rest</td></tr>
+        <tr><td>Easy run AM</td><td>—</td><td>Intervals</td><td>Easy jog only</td><td>Easy run AM</td><td>—</td><td>Mobility</td></tr>
+      </tbody>
+    </table>
+    <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin:28px 0 16px;">How to combine gym + running</div>
+    <p style="font-size:13px;color:var(--ink2);line-height:1.7;max-width:720px;margin-bottom:20px;">Run <strong>before</strong> gym when the run is easy or zone 2 — it warms you up without interfering. Run <strong>after</strong> gym when it's intervals or tempo — you want full leg power for lifting first. Never run hard the day before a heavy legs session.</p>
+    <table class="schedule-table">
+      <thead><tr><th>Day</th><th>Gym</th><th>Run</th><th>Logic</th></tr></thead>
+      <tbody>
+        <tr><td>Monday</td><td>Push</td><td>Easy zone 2 — morning</td><td>Run first, gym evening — no conflict</td></tr>
+        <tr><td>Tuesday</td><td>HYROX</td><td>—</td><td>HYROX is your cardio for the day</td></tr>
+        <tr><td>Wednesday</td><td>—</td><td>Intervals or tempo</td><td>Legs recovered from HYROX — push hard</td></tr>
+        <tr><td>Thursday</td><td>Legs</td><td>Easy jog only if needed</td><td>Heavy legs = no hard run same day</td></tr>
+        <tr><td>Friday</td><td>Pull</td><td>Easy zone 2 — morning</td><td>Run fresh, pull has no leg demand</td></tr>
+        <tr><td>Saturday</td><td>—</td><td>Long run</td><td>Full recovery day before = best long run</td></tr>
+        <tr><td>Sunday</td><td>—</td><td>Rest or mobility</td><td>Recover. Next week starts Monday.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="scroll-nav">
+    <button class="scroll-btn active" onclick="switchWeek('w1',this)">Week 1 — Base</button>
+    <button class="scroll-btn" onclick="switchWeek('w2',this)">Week 2 — Volume</button>
+    <button class="scroll-btn" onclick="switchWeek('w3',this)">Week 3 — Peak</button>
+    <button class="scroll-btn" onclick="switchWeek('w4',this)">Week 4 — Deload</button>
+    <button class="scroll-btn" onclick="switchWeek('wrun',this)">Running</button>
+    <button class="scroll-btn" onclick="switchWeek('wbench',this)">Benchmarks</button>
+    <button class="scroll-btn" onclick="switchWeek('w5',this)">Month 2 & 3 ↗</button>
+  </div>
+
+  <!-- WEEK 1 -->
+  <div class="sub-content active" id="w1">
+    <div class="week-hero">
+      <div class="week-num">01</div>
+      <div>
+        <div class="week-title">Base &amp; <em>Patterns</em></div>
+        <div class="week-goal">Gym: 70% all lifts — technique first · HYROX: circuit base format · Running: calibrate pace · Deload applies to everything — including ego</div>
+      </div>
+    </div>
+    <div class="session-grid">
+
+      <div class="session-card">
+        <div class="card-day">Monday · Push</div>
+        <div class="card-title">Bodybuilding <em>Upper Push</em></div>
+        <div class="card-tags"><span class="tag tag-g">Chest · Shoulders · Triceps</span><span class="tag">60 min</span><span class="tag">Tempo 3-1-1</span></div>
+        <div class="card-rule"></div>
+        <button class="card-toggle" onclick="tog(this)"><span>See exercises</span><span class="tog-arrow">▶</span></button>
+        <div class="card-body">
+          <div class="card-note"><div class="note-lbl">Note</div><div class="note-text">Week 1. You're not here to prove anything yet. Learn the weight, own the movement, set the baseline.</div></div>
+          <div class="blk-lbl" style="margin-top:14px">Warm up · 8 min — 5 min treadmill · 2×10 push-up · 2×10 empty bar lateral raise</div>
+          <ul class="ex-list">
+            <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Flat bench press barbell<small>Tempo 3-1-1</small></div><div class="ex-vol">4×10<div class="ex-rest">90s · 70%</div></div></li>
+            <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Incline dumbbell press<small>Tempo 3-1-1</small></div><div class="ex-vol">4×12<div class="ex-rest">75s · 70%</div></div></li>
+            <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Low to high cable fly<small>Tempo 2-1-2</small></div><div class="ex-vol">3×15<div class="ex-rest">60s · 70%</div></div></li>
+            <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">Seated DB shoulder press<small>Tempo 2-1-1</small></div><div class="ex-vol">3×12<div class="ex-rest">75s · 70%</div></div></li>
+            <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Lateral raises<small>Tempo 2-0-2</small></div><div class="ex-vol">4×15<div class="ex-rest">45s · 70%</div></div></li>
+            <li class="ex-item"><span class="ex-num">06</span><div class="ex-name">Tricep rope pushdown<small>Tempo 2-1-2</small></div><div class="ex-vol">3×15<div class="ex-rest">60s · 70%</div></div></li>
+            <li class="ex-item"><span class="ex-num">07</span><div class="ex-name">Bench dips</div><div class="ex-vol">3×12<div class="ex-rest">60s · BW</div></div></li>
+          </ul>
+          <div class="blk-lbl" style="margin-top:14px">Cool down · 5 min — Chest doorframe stretch 2×30s · Cross-body shoulder stretch 2×30s each side</div>
+        </div>
+      </div>
+
+      <div class="session-card">
+        <div class="card-day">Tuesday · HYROX</div>
+        <div class="card-title">Circuit Base <em>@ormazaaes</em></div>
+        <div class="card-tags"><span class="tag tag-g">Full body · Conditioning</span><span class="tag">60 min</span><span class="tag">3 rounds for time</span></div>
+        <div class="card-rule"></div>
+        <button class="card-toggle" onclick="tog(this)"><span>See session</span><span class="tog-arrow">▶</span></button>
+        <div class="card-body">
+          <div class="card-note"><div class="note-lbl">Note</div><div class="note-text">First HYROX session. The goal is to feel each station — not race it. Control your heart rate, find your pace, finish clean.</div></div>
+          <div class="blk-lbl" style="margin-top:14px">Warm up · 10 min — 2 rounds: 3 min jogging · 30s squat hold · 10 air squats · 10 side lunges · 5 hamstring walkouts</div>
+          <div class="blk-lbl">3 rounds for time:</div>
+          <ul class="ex-list">
+            <li class="ex-item"><span class="ex-num">S1</span><div class="ex-name">Ski erg</div><div class="ex-vol">500m</div></li>
+            <li class="ex-item"><span class="ex-num">S2</span><div class="ex-name">Burpees to target</div><div class="ex-vol">20 reps<div class="ex-rest">BW</div></div></li>
+            <li class="ex-item"><span class="ex-num">S3</span><div class="ex-name">Run</div><div class="ex-vol">500m</div></li>
+            <li class="ex-item"><span class="ex-num">S4</span><div class="ex-name">Sled push<small>125kg men / 75kg women</small></div><div class="ex-vol">25m</div></li>
+            <li class="ex-item"><span class="ex-num">S5</span><div class="ex-name">Row erg</div><div class="ex-vol">500m</div></li>
+            <li class="ex-item"><span class="ex-num">S6</span><div class="ex-name">Wall balls<small>9kg men / 6kg women</small></div><div class="ex-vol">30 reps</div></li>
+          </ul>
+          <div class="info-box"><span class="info-lbl">Record total time</span>This is your Week 1 benchmark. Every HYROX session we chase to beat it.</div>
+        </div>
+      </div>
+
+      <div class="session-card">
+        <div class="card-day">Thursday · Legs</div>
+        <div class="card-title">Lower Body <em>Strength Base</em></div>
+        <div class="card-tags"><span class="tag tag-g">Quads · Glutes · Hamstrings</span><span class="tag">65 min</span><span class="tag">70% max</span></div>
+        <div class="card-rule"></div>
+        <button class="card-toggle" onclick="tog(this)"><span>See exercises</span><span class="tog-arrow">▶</span></button>
+        <div class="card-body">
+          <div class="card-note"><div class="note-lbl">Note</div><div class="note-text">Your legs carry you through every run, every HYROX station, every squat. Treat them well. Week 1 — feel the depth, feel the load.</div></div>
+          <div class="blk-lbl" style="margin-top:14px">Warm up · 10 min — 5 min bike · BW squat 2×10 · Empty bar deadlift 2×8</div>
+          <ul class="ex-list">
+            <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Back squat</div><div class="ex-vol">4×8<div class="ex-rest">2 min · 70%</div></div></li>
+            <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Conventional deadlift</div><div class="ex-vol">4×6<div class="ex-rest">2.5 min · 70%</div></div></li>
+            <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Barbell hip thrust</div><div class="ex-vol">4×10<div class="ex-rest">90s · 70%</div></div></li>
+            <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">Leg press</div><div class="ex-vol">3×12<div class="ex-rest">90s · 70%</div></div></li>
+            <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Walking barbell lunge</div><div class="ex-vol">3×10/leg<div class="ex-rest">90s · 70%</div></div></li>
+            <li class="ex-item"><span class="ex-num">06</span><div class="ex-name">Lying leg curl</div><div class="ex-vol">3×12<div class="ex-rest">75s · 70%</div></div></li>
+            <li class="ex-item"><span class="ex-num">07</span><div class="ex-name">Standing calf raise</div><div class="ex-vol">4×15<div class="ex-rest">45s · 70%</div></div></li>
+          </ul>
+          <div class="blk-lbl" style="margin-top:14px">Cool down · 5 min — Hamstring stretch 2×30s · Quad stretch 2×30s each · Foam roller 60s each</div>
+        </div>
+      </div>
+
+      <div class="session-card">
+        <div class="card-day">Friday · Pull</div>
+        <div class="card-title">Hybrid Upper Pull <em>+ AMRAP</em></div>
+        <div class="card-tags"><span class="tag tag-g">Back · Biceps · Conditioning</span><span class="tag">60 min</span><span class="tag">Strength + 12 min AMRAP</span></div>
+        <div class="card-rule"></div>
+        <button class="card-toggle" onclick="tog(this)"><span>See exercises</span><span class="tog-arrow">▶</span></button>
+        <div class="card-body">
+          <div class="card-note"><div class="note-lbl">Note</div><div class="note-text">Pull sessions build the back that holds everything together — your posture under load, your row split in HYROX, your running arm drive. Don't skip these.</div></div>
+          <div class="blk-lbl" style="margin-top:14px">Warm up · 8 min — 3 min easy row · Band dislocations 2×10 · Assisted pull-up 2×5</div>
+          <ul class="ex-list">
+            <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Romanian deadlift</div><div class="ex-vol">4×8<div class="ex-rest">2 min · 70%</div></div></li>
+            <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Pull-ups</div><div class="ex-vol">4×8<div class="ex-rest">90s · BW</div></div></li>
+            <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Pendlay row</div><div class="ex-vol">4×8<div class="ex-rest">90s · 70%</div></div></li>
+            <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">Seated cable row<small>Neutral grip</small></div><div class="ex-vol">3×12<div class="ex-rest">75s · 70%</div></div></li>
+            <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Face pulls</div><div class="ex-vol">3×15<div class="ex-rest">60s · 70%</div></div></li>
+            <li class="ex-item"><span class="ex-num">06</span><div class="ex-name">Barbell curl</div><div class="ex-vol">3×12<div class="ex-rest">60s · 70%</div></div></li>
+          </ul>
+          <div class="info-box"><span class="info-lbl">AMRAP finisher · 12 min — log rounds</span>10 KB swings · 8 box jumps · 6 jump burpees · 200m row · No rest between movements.</div>
+          <div class="blk-lbl" style="margin-top:14px">Cool down · 5 min — Lat stretch on bar 2×30s · Bicep wall stretch · Breathing 2 min</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- WEEK 2 -->
+  <div class="sub-content" id="w2">
+    <div class="week-hero">
+      <div class="week-num">02</div>
+      <div>
+        <div class="week-title">Volume &amp; <em>New Formats</em></div>
+        <div class="week-goal">Gym: +2.5kg upper / +5kg lower vs Week 1 · HYROX: descending ladder · Running: progressive long + volume intervals</div>
+      </div>
+    </div>
+    <div class="session-grid">
+
+      <div class="session-card">
+        <div class="card-day">Monday · Push</div>
+        <div class="card-title">Chest &amp; Shoulders <em>Supersets</em></div>
+        <div class="card-tags"><span class="tag tag-g">Chest · Shoulders · Triceps</span><span class="tag">65 min</span><span class="tag">Supersets + Pump finisher</span></div>
+        <div class="card-rule"></div>
+        <button class="card-toggle" onclick="tog(this)"><span>See exercises</span><span class="tog-arrow">▶</span></button>
+        <div class="card-body">
+          <div class="card-note"><div class="note-lbl">Note</div><div class="note-text">Week 2. The weight goes up. The format changes. Supersets mean less rest, more work. Your body is adapting — don't slow it down.</div></div>
+          <div class="blk-lbl" style="margin-top:14px">Superset A — 4 rounds · 90s rest after A2</div>
+          <ul class="ex-list">
+            <li class="ex-item"><span class="ex-num">A1</span><div class="ex-name">Incline barbell press</div><div class="ex-vol">4×10<div class="ex-rest">75%</div></div></li>
+            <li class="ex-item"><span class="ex-num">A2</span><div class="ex-name">Flat dumbbell fly</div><div class="ex-vol">4×12<div class="ex-rest">75%</div></div></li>
+          </ul>
+          <div class="blk-lbl">Superset B — 4 rounds · 75s rest after B2</div>
+          <ul class="ex-list">
+            <li class="ex-item"><span class="ex-num">B1</span><div class="ex-name">Arnold press seated</div><div class="ex-vol">4×12<div class="ex-rest">75%</div></div></li>
+            <li class="ex-item"><span class="ex-num">B2</span><div class="ex-name">Cable lateral raise</div><div class="ex-vol">4×15<div class="ex-rest">75%</div></div></li>
+          </ul>
+          <div class="blk-lbl">Superset C — 3 rounds · 60s rest after C2</div>
+          <ul class="ex-list">
+            <li class="ex-item"><span class="ex-num">C1</span><div class="ex-name">High to low cable crossover</div><div class="ex-vol">3×15<div class="ex-rest">75%</div></div></li>
+            <li class="ex-item"><span class="ex-num">C2</span><div class="ex-name">Diamond push-up</div><div class="ex-vol">3×Failure<div class="ex-rest">BW</div></div></li>
+          </ul>
+          <div class="info-box"><span class="info-lbl">Finisher · 3 rounds no rest</span>20 light lateral raises · 20 band overhead press · 10 slow push-ups (3s down)</div>
+        </div>
+      </div>
+
+      <div class="session-card">
+        <div class="card-day">Tuesday · HYROX</div>
+        <div class="card-title">Descending Ladder <em>@ormazaaes</em></div>
+        <div class="card-tags"><span class="tag tag-g">Full body · Race prep</span><span class="tag">60–75 min</span><span class="tag">Complete for time</span></div>
+        <div class="card-rule"></div>
+        <button class="card-toggle" onclick="tog(this)"><span>See session</span><span class="tog-arrow">▶</span></button>
+        <div class="card-body">
+          <div class="card-note"><div class="note-lbl">Note</div><div class="note-text">This one gets harder as you get more tired. That's the point. HYROX races are won in the second half — train for that.</div></div>
+          <ul class="ex-list" style="margin-top:14px">
+            <li class="ex-item"><span class="ex-num">1</span><div class="ex-name">Run</div><div class="ex-vol">1,000m</div></li>
+            <li class="ex-item"><span class="ex-num">2</span><div class="ex-name">Sled push<small>125kg men / 75kg women</small></div><div class="ex-vol">50m</div></li>
+            <li class="ex-item"><span class="ex-num">3</span><div class="ex-name">Run</div><div class="ex-vol">800m</div></li>
+            <li class="ex-item"><span class="ex-num">4</span><div class="ex-name">Sled pull<small>75kg men / 50kg women</small></div><div class="ex-vol">50m</div></li>
+            <li class="ex-item"><span class="ex-num">5</span><div class="ex-name">Run</div><div class="ex-vol">600m</div></li>
+            <li class="ex-item"><span class="ex-num">6</span><div class="ex-name">Wall balls<small>9kg men / 6kg women</small></div><div class="ex-vol">50 reps</div></li>
+            <li class="ex-item"><span class="ex-num">7</span><div class="ex-name">Run</div><div class="ex-vol">400m</div></li>
+            <li class="ex-item"><span class="ex-num">8</span><div class="ex-name">Burpees to target</div><div class="ex-vol">50 reps</div></li>
+            <li class="ex-item"><span class="ex-num">9</span><div class="ex-name">Run</div><div class="ex-vol">200m</div></li>
+            <li class="ex-item"><span class="ex-num">10</span><div class="ex-name">Double KB farmer carry<small>24kg ea men / 16kg women</small></div><div class="ex-vol">50m</div></li>
+          </ul>
+          <div class="info-box"><span class="info-lbl">Record total time</span>Compare with Week 1 circuit time to measure work capacity growth.</div>
+        </div>
+      </div>
+
+      <div class="session-card">
+        <div class="card-day">Thursday · Legs</div>
+        <div class="card-title">Posterior Chain <em>Domination</em></div>
+        <div class="card-tags"><span class="tag tag-g">Hamstrings · Glutes · Back</span><span class="tag">60 min</span><span class="tag">75% · Sumo + Unilateral</span></div>
+        <div class="card-rule"></div>
+        <button class="card-toggle" onclick="tog(this)"><span>See exercises</span><span class="tog-arrow">▶</span></button>
+        <div class="card-body">
+          <div class="card-note"><div class="note-lbl">Note</div><div class="note-text">Sumo deadlift this week. Different stance, different muscles, same purpose — build legs that don't quit at km 6.</div></div>
+          <div class="blk-lbl" style="margin-top:14px">Warm up · 10 min — 5 min bike · Goblet squat 2×10 · RDL empty bar 2×8</div>
+          <ul class="ex-list">
+            <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Sumo deadlift</div><div class="ex-vol">5×5<div class="ex-rest">2.5 min · 75%</div></div></li>
+            <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Good morning barbell</div><div class="ex-vol">4×10<div class="ex-rest">90s · 75%</div></div></li>
+            <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Unilateral hip thrust (DB)</div><div class="ex-vol">3×12/leg<div class="ex-rest">75s · 75%</div></div></li>
+            <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">Seated leg curl machine</div><div class="ex-vol">4×12<div class="ex-rest">75s · 75%</div></div></li>
+            <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Unilateral dumbbell row</div><div class="ex-vol">4×10/side<div class="ex-rest">60s · 75%</div></div></li>
+            <li class="ex-item"><span class="ex-num">06</span><div class="ex-name">Dumbbell pullover</div><div class="ex-vol">3×12<div class="ex-rest">60s · 75%</div></div></li>
+          </ul>
+          <div class="info-box"><span class="info-lbl">AMRAP finisher · 4 min</span>10 KB swings · 5 pull-ups · 10 banded hip thrust · Log rounds completed.</div>
+        </div>
+      </div>
+
+      <div class="session-card">
+        <div class="card-day">Friday · Pull</div>
+        <div class="card-title">Cluster &amp; <em>Density</em></div>
+        <div class="card-tags"><span class="tag tag-g">Back · Biceps</span><span class="tag">65 min</span><span class="tag">Clusters + Supersets</span></div>
+        <div class="card-rule"></div>
+        <button class="card-toggle" onclick="tog(this)"><span>See exercises</span><span class="tog-arrow">▶</span></button>
+        <div class="card-body">
+          <div class="card-note"><div class="note-lbl">Note</div><div class="note-text">Cluster sets for the first time. 6 reps, short rest, 6 reps, short rest, 6 reps. You'll lift more than you think you can. That's why it works.</div></div>
+          <div class="blk-lbl" style="margin-top:14px">Strength block · 15 min</div>
+          <ul class="ex-list">
+            <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Weighted pull-ups</div><div class="ex-vol">4×8<div class="ex-rest">90s · 75%</div></div></li>
+            <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Pendlay row</div><div class="ex-vol">4×8<div class="ex-rest">90s · 75%</div></div></li>
+          </ul>
+          <div class="blk-lbl">Density supersets · 20 min</div>
+          <ul class="ex-list">
+            <li class="ex-item"><span class="ex-num">A1</span><div class="ex-name">Wide grip lat pulldown</div><div class="ex-vol">4×12<div class="ex-rest">60s after A2</div></div></li>
+            <li class="ex-item"><span class="ex-num">A2</span><div class="ex-name">Dumbbell pullover</div><div class="ex-vol">4×12<div class="ex-rest">60s</div></div></li>
+            <li class="ex-item"><span class="ex-num">B1</span><div class="ex-name">T-bar row</div><div class="ex-vol">3×10<div class="ex-rest">60s after B2</div></div></li>
+            <li class="ex-item"><span class="ex-num">B2</span><div class="ex-name">Face pulls</div><div class="ex-vol">3×15<div class="ex-rest">60s</div></div></li>
+          </ul>
+          <div class="info-box"><span class="info-lbl">Bicep cluster · 4 clusters · 90s between</span>6 reps + 10s rest + 6 reps + 10s rest + 6 reps = 1 cluster · Straight barbell curl at 75%</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- WEEK 3 -->
+  <div class="sub-content" id="w3">
+    <div class="week-hero">
+      <div class="week-num">03</div>
+      <div>
+        <div class="week-title">Peak <em>Intensity</em></div>
+        <div class="week-goal">Gym: 80% all lifts — tempo and eccentric overload · HYROX: 60 min engine test · Running: volume peak week</div>
+      </div>
+    </div>
+    <div class="session-grid">
+
+      <div class="session-card">
+        <div class="card-day">Monday · Push</div>
+        <div class="card-title">Power &amp; <em>Eccentric</em></div>
+        <div class="card-tags"><span class="tag tag-g">Chest · Shoulders · Triceps</span><span class="tag">70 min</span><span class="tag">80% · Tempo overload</span></div>
+        <div class="card-rule"></div>
+        <button class="card-toggle" onclick="tog(this)"><span>See exercises</span><span class="tog-arrow">▶</span></button>
+        <div class="card-body">
+          <div class="card-note"><div class="note-lbl">Note</div><div class="note-text">80% this week. The last rep of every set should take real effort. If it doesn't, add weight. If you can't finish the set, you went too heavy. Find that line.</div></div>
+          <div class="blk-lbl" style="margin-top:14px">Warm up · 8 min — 5 min treadmill · Band pull-apart 2×15 · Slow eccentric push-up 2×5</div>
+          <ul class="ex-list">
+            <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Flat dumbbell press<small>Tempo 5-1-1</small></div><div class="ex-vol">5×6<div class="ex-rest">2 min · 80%</div></div></li>
+            <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Incline barbell press<small>Tempo 5-1-1</small></div><div class="ex-vol">4×6<div class="ex-rest">2 min · 80%</div></div></li>
+            <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Explosive push press<small>Explosive tempo</small></div><div class="ex-vol">4×5<div class="ex-rest">2 min · 80%</div></div></li>
+            <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">Rotational landmine press</div><div class="ex-vol">3×8/side<div class="ex-rest">75s · 80%</div></div></li>
+            <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Low to high cable crossover</div><div class="ex-vol">3×15<div class="ex-rest">60s · 80%</div></div></li>
+            <li class="ex-item"><span class="ex-num">06</span><div class="ex-name">Alternating front raise</div><div class="ex-vol">3×12<div class="ex-rest">60s · 80%</div></div></li>
+            <li class="ex-item"><span class="ex-num">07</span><div class="ex-name">EZ bar overhead tricep ext.</div><div class="ex-vol">3×12<div class="ex-rest">60s · 80%</div></div></li>
+            <li class="ex-item"><span class="ex-num">08</span><div class="ex-name">Dips to failure</div><div class="ex-vol">3×Failure<div class="ex-rest">75s · BW</div></div></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="session-card">
+        <div class="card-day">Tuesday · HYROX</div>
+        <div class="card-title">60 Min <em>Engine Test · @ormazaaes</em></div>
+        <div class="card-tags"><span class="tag tag-g">AMRAP 60 min</span><span class="tag">Race simulation</span><span class="tag">Log rounds</span></div>
+        <div class="card-rule"></div>
+        <button class="card-toggle" onclick="tog(this)"><span>See session</span><span class="tog-arrow">▶</span></button>
+        <div class="card-body">
+          <div class="card-note"><div class="note-lbl">Note</div><div class="note-text">60 minutes. Full gas. Most people fall apart at the one-hour mark because they've never trained there. Today you train there.</div></div>
+          <div class="blk-lbl" style="margin-top:14px">AMRAP 60 minutes:</div>
+          <ul class="ex-list">
+            <li class="ex-item"><span class="ex-num">1</span><div class="ex-name">Run</div><div class="ex-vol">500m</div></li>
+            <li class="ex-item"><span class="ex-num">2</span><div class="ex-name">Weighted lunges</div><div class="ex-vol">50 reps<div class="ex-rest">BW</div></div></li>
+            <li class="ex-item"><span class="ex-num">3</span><div class="ex-name">Run</div><div class="ex-vol">500m</div></li>
+            <li class="ex-item"><span class="ex-num">4</span><div class="ex-name">Ski erg</div><div class="ex-vol">500m</div></li>
+            <li class="ex-item"><span class="ex-num">5</span><div class="ex-name">Run</div><div class="ex-vol">500m</div></li>
+            <li class="ex-item"><span class="ex-num">6</span><div class="ex-name">Burpee broad jumps</div><div class="ex-vol">30 reps</div></li>
+            <li class="ex-item"><span class="ex-num">7</span><div class="ex-name">Run</div><div class="ex-vol">500m</div></li>
+            <li class="ex-item"><span class="ex-num">8</span><div class="ex-name">Wall balls<small>9kg men / 6kg women</small></div><div class="ex-vol">50 reps</div></li>
+            <li class="ex-item"><span class="ex-num">9</span><div class="ex-name">Run</div><div class="ex-vol">500m</div></li>
+            <li class="ex-item"><span class="ex-num">10</span><div class="ex-name">Sled push<small>125kg men / 75kg women</small></div><div class="ex-vol">50m</div></li>
+            <li class="ex-item"><span class="ex-num">11</span><div class="ex-name">Run</div><div class="ex-vol">500m</div></li>
+            <li class="ex-item"><span class="ex-num">12</span><div class="ex-name">Sled pull<small>75kg men / 50kg women</small></div><div class="ex-vol">50m</div></li>
+          </ul>
+          <div class="info-box"><span class="info-lbl">Score: total rounds completed</span>This is your aerobic capacity benchmark for Month 1.</div>
+        </div>
+      </div>
+
+      <div class="session-card">
+        <div class="card-day">Thursday · Legs</div>
+        <div class="card-title">Unilateral <em>Focus</em></div>
+        <div class="card-tags"><span class="tag tag-g">Quads · Glutes · Core</span><span class="tag">70 min</span><span class="tag">80% · Front squat + Single leg</span></div>
+        <div class="card-rule"></div>
+        <button class="card-toggle" onclick="tog(this)"><span>See exercises</span><span class="tog-arrow">▶</span></button>
+        <div class="card-body">
+          <div class="card-note"><div class="note-lbl">Note</div><div class="note-text">Front squat and unilateral work today. Harder than it looks. Your weaker leg will expose itself — pay attention to it.</div></div>
+          <div class="blk-lbl" style="margin-top:14px">Warm up · 10 min — 5 min bike · Front squat empty bar 2×8 · RDL empty bar 2×8</div>
+          <ul class="ex-list">
+            <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Front squat</div><div class="ex-vol">4×6<div class="ex-rest">2 min · 80%</div></div></li>
+            <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Conventional deadlift</div><div class="ex-vol">4×6<div class="ex-rest">2.5 min · 80%</div></div></li>
+            <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Barbell hip thrust</div><div class="ex-vol">4×10<div class="ex-rest">90s · 80%</div></div></li>
+            <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">Bulgarian split squat</div><div class="ex-vol">4×10/leg<div class="ex-rest">75s · 80%</div></div></li>
+            <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Lateral step-up barbell</div><div class="ex-vol">3×10/leg<div class="ex-rest">75s · 80%</div></div></li>
+            <li class="ex-item"><span class="ex-num">06</span><div class="ex-name">Unilateral hip thrust</div><div class="ex-vol">3×12/leg<div class="ex-rest">60s · 80%</div></div></li>
+            <li class="ex-item"><span class="ex-num">07</span><div class="ex-name">Unilateral leg curl</div><div class="ex-vol">3×12/leg<div class="ex-rest">60s · 80%</div></div></li>
+            <li class="ex-item"><span class="ex-num">08</span><div class="ex-name">Unilateral calf raise</div><div class="ex-vol">4×15/leg<div class="ex-rest">45s · BW</div></div></li>
+          </ul>
+          <div class="blk-lbl">Core · 10 min</div>
+          <ul class="ex-list">
+            <li class="ex-item"><span class="ex-num">A</span><div class="ex-name">Hanging knee raises</div><div class="ex-vol">3×12</div></li>
+            <li class="ex-item"><span class="ex-num">B</span><div class="ex-name">Pallof press</div><div class="ex-vol">3×12/side</div></li>
+            <li class="ex-item"><span class="ex-num">C</span><div class="ex-name">Hollow body hold</div><div class="ex-vol">3×35s</div></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="session-card">
+        <div class="card-day">Friday · Pull</div>
+        <div class="card-title">Peak Pull <em>Advanced Clusters</em></div>
+        <div class="card-tags"><span class="tag tag-g">Back · Biceps</span><span class="tag">65 min</span><span class="tag">80% · Peak week</span></div>
+        <div class="card-rule"></div>
+        <button class="card-toggle" onclick="tog(this)"><span>See exercises</span><span class="tog-arrow">▶</span></button>
+        <div class="card-body">
+          <div class="card-note"><div class="note-lbl">Note</div><div class="note-text">Peak week pull session. Heavier load, advanced cluster, density block. This is the hardest pull day of Month 1. Own it.</div></div>
+          <div class="blk-lbl" style="margin-top:14px">Strength block · 15 min</div>
+          <ul class="ex-list">
+            <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Weighted pull-ups</div><div class="ex-vol">5×5<div class="ex-rest">90s · 80%</div></div></li>
+            <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Pendlay row</div><div class="ex-vol">4×6<div class="ex-rest">90s · 80%</div></div></li>
+          </ul>
+          <div class="blk-lbl">Density supersets · 20 min</div>
+          <ul class="ex-list">
+            <li class="ex-item"><span class="ex-num">A1</span><div class="ex-name">Wide grip lat pulldown</div><div class="ex-vol">4×12<div class="ex-rest">60s after A2</div></div></li>
+            <li class="ex-item"><span class="ex-num">A2</span><div class="ex-name">Dumbbell pullover</div><div class="ex-vol">4×12<div class="ex-rest">60s</div></div></li>
+            <li class="ex-item"><span class="ex-num">B1</span><div class="ex-name">T-bar row</div><div class="ex-vol">3×10<div class="ex-rest">60s after B2</div></div></li>
+            <li class="ex-item"><span class="ex-num">B2</span><div class="ex-name">Face pulls</div><div class="ex-vol">3×15<div class="ex-rest">60s</div></div></li>
+          </ul>
+          <div class="info-box"><span class="info-lbl">Advanced bicep cluster · 4 clusters · 90s between</span>6 reps + 10s rest + 6 reps + 10s rest + 6 reps = 1 cluster · Straight barbell curl at 80%</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- WEEK 4 DELOAD -->
+  <div class="sub-content" id="w4">
+    <div class="week-hero">
+      <div class="week-num">04</div>
+      <div>
+        <div class="week-title">Deload &amp; <em>Recovery</em></div>
+        <div class="week-goal">Gym: 60% load · 3 sets max · No finishers · HYROX: every 4 min · Running: easy + light speed only</div>
+      </div>
+    </div>
+    <div class="session-grid">
+
+      <div class="session-card">
+        <div class="card-day">Monday · Push · Deload</div>
+        <div class="card-title">Push <em>Light</em></div>
+        <div class="card-tags"><span class="tag tag-g">Chest · Shoulders · Triceps</span><span class="tag">45 min</span><span class="tag">60% · No finisher</span></div>
+        <div class="card-rule"></div>
+        <button class="card-toggle" onclick="tog(this)"><span>See exercises</span><span class="tog-arrow">▶</span></button>
+        <div class="card-body">
+          <div class="card-note"><div class="note-lbl">Note</div><div class="note-text">Deload week is not a rest week. It's a recovery week — and recovery is where adaptation happens. You don't get stronger during training. You get stronger during recovery. Do the work, but don't push it.</div></div>
+          <ul class="ex-list" style="margin-top:14px">
+            <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Flat bench press barbell</div><div class="ex-vol">3×10<div class="ex-rest">90s · 60%</div></div></li>
+            <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Incline dumbbell press</div><div class="ex-vol">3×12<div class="ex-rest">75s · 60%</div></div></li>
+            <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Seated DB shoulder press</div><div class="ex-vol">3×12<div class="ex-rest">75s · 60%</div></div></li>
+            <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">Lateral raises</div><div class="ex-vol">3×15<div class="ex-rest">45s · 60%</div></div></li>
+            <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Tricep rope pushdown</div><div class="ex-vol">3×15<div class="ex-rest">60s · 60%</div></div></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="session-card">
+        <div class="card-day">Tuesday · HYROX · Deload</div>
+        <div class="card-title">Every 4 Min <em>@ormazaaes</em></div>
+        <div class="card-tags"><span class="tag tag-g">Strategic recovery</span><span class="tag">6 rounds</span><span class="tag">Score: calories rowed</span></div>
+        <div class="card-rule"></div>
+        <button class="card-toggle" onclick="tog(this)"><span>See session</span><span class="tog-arrow">▶</span></button>
+        <div class="card-body">
+          <div class="card-note"><div class="note-lbl">Note</div><div class="note-text">Deload week. Gym is at 60% — HYROX follows the same logic. Move well, breathe controlled, finish without emptying the tank. Focus on identical output every round — that's the deload skill.</div></div>
+          <div class="blk-lbl" style="margin-top:14px">Every 4 minutes × 6 rounds (work 3 min · rest 1 min):</div>
+          <ul class="ex-list">
+            <li class="ex-item"><span class="ex-num">1</span><div class="ex-name">Ski erg</div><div class="ex-vol">250m</div></li>
+            <li class="ex-item"><span class="ex-num">2</span><div class="ex-name">Wall balls<small>9kg men / 6kg women</small></div><div class="ex-vol">10 reps</div></li>
+            <li class="ex-item"><span class="ex-num">3</span><div class="ex-name">Burpee broad jumps</div><div class="ex-vol">10 reps</div></li>
+            <li class="ex-item"><span class="ex-num">4</span><div class="ex-name">Row erg</div><div class="ex-vol">Max cal<div class="ex-rest">remaining time</div></div></li>
+          </ul>
+          <div class="info-box"><span class="info-lbl">Score: total calories rowed across all 6 rounds</span>Focus on identical output every round.</div>
+        </div>
+      </div>
+
+      <div class="session-card">
+        <div class="card-day">Thursday · Legs · Deload</div>
+        <div class="card-title">Legs <em>Light</em></div>
+        <div class="card-tags"><span class="tag tag-g">Quads · Glutes · Hamstrings</span><span class="tag">45 min</span><span class="tag">60% · No finisher</span></div>
+        <div class="card-rule"></div>
+        <button class="card-toggle" onclick="tog(this)"><span>See exercises</span><span class="tog-arrow">▶</span></button>
+        <div class="card-body">
+          <ul class="ex-list">
+            <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Back squat</div><div class="ex-vol">3×10<div class="ex-rest">2 min · 60%</div></div></li>
+            <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Romanian deadlift</div><div class="ex-vol">3×10<div class="ex-rest">90s · 60%</div></div></li>
+            <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Barbell hip thrust</div><div class="ex-vol">3×12<div class="ex-rest">90s · 60%</div></div></li>
+            <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">Leg extension machine</div><div class="ex-vol">3×15<div class="ex-rest">60s · Light</div></div></li>
+            <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Standing calf raise</div><div class="ex-vol">3×15<div class="ex-rest">45s · Light</div></div></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="session-card">
+        <div class="card-day">Friday · Pull · Deload</div>
+        <div class="card-title">Pull <em>Light</em></div>
+        <div class="card-tags"><span class="tag tag-g">Back · Biceps</span><span class="tag">45 min</span><span class="tag">60% · No finisher</span></div>
+        <div class="card-rule"></div>
+        <button class="card-toggle" onclick="tog(this)"><span>See exercises</span><span class="tog-arrow">▶</span></button>
+        <div class="card-body">
+          <ul class="ex-list">
+            <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Pull-ups</div><div class="ex-vol">3×8<div class="ex-rest">90s · BW</div></div></li>
+            <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Seated cable row</div><div class="ex-vol">3×12<div class="ex-rest">75s · 60%</div></div></li>
+            <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Wide grip lat pulldown</div><div class="ex-vol">3×12<div class="ex-rest">75s · 60%</div></div></li>
+            <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">Face pulls</div><div class="ex-vol">3×15<div class="ex-rest">60s · Light</div></div></li>
+            <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Dumbbell curl</div><div class="ex-vol">3×12<div class="ex-rest">60s · 60%</div></div></li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RUNNING -->
+  <div class="sub-content" id="wrun">
+    <div class="week-hero">
+      <div class="week-num" style="font-size:60px">Run</div>
+      <div>
+        <div class="week-title">Running <em>Programme</em></div>
+        <div class="week-goal">Threshold: 4:08/km · Zone 2: 5:00–5:20/km · Tempo: 4:30–4:40/km · Intervals: 4:15–4:25/km · 5K speed: 3:45–4:00/km</div>
+      </div>
+    </div>
+
+    <div style="padding:0 56px 64px;">
+
+      <div class="scroll-nav" style="padding:0;margin:32px 0 0;">
+        <button class="scroll-btn active" onclick="switchRun('r10ka',this)">10K Version A</button>
+        <button class="scroll-btn" onclick="switchRun('r10kb',this)">10K Version B</button>
+        <button class="scroll-btn" onclick="switchRun('r5ka',this)">5K Version A</button>
+        <button class="scroll-btn" onclick="switchRun('r5kb',this)">5K Version B</button>
+      </div>
+
+      <div id="r10ka" class="sub-content active" style="margin-top:28px;">
+        <div class="card-note" style="margin-bottom:24px;"><div class="note-lbl">Version A — 3 runs per week</div><div class="note-text">All paces calculated from your threshold of 4:08/km. If your fitness changes, adjust proportionally. The feel matters more than the exact number.</div></div>
+
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin-bottom:20px;">Week 1</div>
+        <div class="run-block"><div class="run-title">Run 1 — Long easy · 6km</div><div class="run-detail"><span>Warm up:</span> 500m walk + 500m easy jog at 6:00/km · <span>Main:</span> 5km at 5:10–5:20/km — zone 2, conversational · <span>Cool down:</span> 500m easy jog + 500m walk</div></div>
+        <div class="run-block"><div class="run-title">Run 2 — Intervals · ~6km total</div><div class="run-detail"><span>Warm up:</span> 500m walk + 1km easy jog at 5:30/km · <span>Main:</span> 6×400m at 4:20/km — 90s easy jog between · <span>Cool down:</span> 500m easy jog + 500m walk</div></div>
+        <div class="run-block"><div class="run-title">Run 3 — Base · 4km</div><div class="run-detail"><span>Warm up:</span> 500m walk · <span>Main:</span> 4km at 5:20–5:30/km — zone 1, very easy · <span>Cool down:</span> 500m walk</div></div>
+
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin:28px 0 20px;">Week 2</div>
+        <div class="run-block"><div class="run-title">Run 1 — Long progressive · 8km</div><div class="run-detail"><span>Warm up:</span> 500m walk + 500m easy jog · <span>Main:</span> 3km at 5:10 → 3km at 5:00 → 2km at 4:45/km · <span>Cool down:</span> 1km easy jog + 500m walk</div></div>
+        <div class="run-block"><div class="run-title">Run 2 — Intervals · ~7km total</div><div class="run-detail"><span>Warm up:</span> 500m walk + 1km easy jog at 5:20/km · <span>Main:</span> 7×400m at 4:15/km — 90s easy jog between · <span>Cool down:</span> 500m easy jog + 500m walk</div></div>
+        <div class="run-block"><div class="run-title">Run 3 — Base · 5km</div><div class="run-detail"><span>Warm up:</span> 500m walk · <span>Main:</span> 5km at 5:10–5:20/km · <span>Cool down:</span> 500m walk</div></div>
+
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin:28px 0 20px;">Week 3</div>
+        <div class="run-block"><div class="run-title">Run 1 — Long · 10km</div><div class="run-detail"><span>Warm up:</span> 500m walk + 1km easy jog · <span>Main:</span> 9km at 5:00–5:10/km — sustained zone 2 · <span>Cool down:</span> 1km easy jog + 500m walk</div></div>
+        <div class="run-block"><div class="run-title">Run 2 — Threshold intervals · ~8km</div><div class="run-detail"><span>Warm up:</span> 500m walk + 1.5km easy jog · <span>Main:</span> 5×1,000m at 4:15–4:20/km — 3 min easy jog between · <span>Cool down:</span> 1km easy jog + 500m walk</div></div>
+        <div class="run-block"><div class="run-title">Run 3 — Tempo · ~6km</div><div class="run-detail"><span>Warm up:</span> 500m walk + 1km easy jog · <span>Main:</span> 4km at 4:30–4:35/km — comfortably hard · <span>Cool down:</span> 1km easy jog + 500m walk</div></div>
+
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin:28px 0 20px;">Week 4 — Deload</div>
+        <div class="run-block"><div class="run-title">Run 1 — Easy · 5km</div><div class="run-detail"><span>Main:</span> 5km at 5:20–5:30/km — zone 1 only</div></div>
+        <div class="run-block"><div class="run-title">Run 2 — Light intervals · ~5km</div><div class="run-detail"><span>Main:</span> 3×400m at 4:30/km — 2 min rest between</div></div>
+        <div class="run-block"><div class="run-title">Run 3 — Easy base · 4km</div><div class="run-detail"><span>Main:</span> 4km at 5:30/km</div></div>
+      </div>
+
+      <div id="r10kb" class="sub-content" style="margin-top:28px;">
+        <div class="card-note" style="margin-bottom:24px;"><div class="note-lbl">Version B — 2 runs per week</div><div class="note-text">Use this version when time is limited. Fewer sessions, same progression. Quality over quantity.</div></div>
+
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin-bottom:20px;">Week 1</div>
+        <div class="run-block"><div class="run-title">Run 1 — Long easy · 7km</div><div class="run-detail"><span>Warm up:</span> 500m walk + 500m easy jog · <span>Main:</span> 6km at 5:10–5:20/km · <span>Cool down:</span> 500m jog + 500m walk</div></div>
+        <div class="run-block"><div class="run-title">Run 2 — Intervals · ~6km</div><div class="run-detail"><span>Warm up:</span> 500m walk + 1km easy jog · <span>Main:</span> 6×400m at 4:20/km · 90s jog between · <span>Cool down:</span> 500m jog + 500m walk</div></div>
+
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin:28px 0 20px;">Week 2</div>
+        <div class="run-block"><div class="run-title">Run 1 — Long progressive · 9km</div><div class="run-detail"><span>Main:</span> 3km at 5:10 → 4km at 5:00 → 2km at 4:45/km</div></div>
+        <div class="run-block"><div class="run-title">Run 2 — Intervals · ~7km</div><div class="run-detail"><span>Main:</span> 7×400m at 4:15/km · 90s jog between</div></div>
+
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin:28px 0 20px;">Week 3</div>
+        <div class="run-block"><div class="run-title">Run 1 — Long · 11km</div><div class="run-detail"><span>Main:</span> 10km at 5:00/km zone 2</div></div>
+        <div class="run-block"><div class="run-title">Run 2 — Threshold intervals · ~8km</div><div class="run-detail"><span>Main:</span> 5×1,000m at 4:15–4:20/km · 3 min jog between</div></div>
+
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin:28px 0 20px;">Week 4 — Deload</div>
+        <div class="run-block"><div class="run-title">Run 1 — Easy · 5km at 5:20–5:30/km</div></div>
+        <div class="run-block"><div class="run-title">Run 2 — Light intervals · 3×400m at 4:30/km · 2 min rest</div></div>
+      </div>
+
+      <div id="r5ka" class="sub-content" style="margin-top:28px;">
+        <div class="card-note" style="margin-bottom:24px;"><div class="note-lbl">5K Programme — Version A · 3 runs per week</div><div class="note-text">Threshold: 4:08/km · 5K target pace: 4:00–4:10/km · Speed sessions: 200m at 3:45–3:55/km</div></div>
+
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin-bottom:20px;">Week 1</div>
+        <div class="run-block"><div class="run-title">Run 1 — Speed base · ~5km</div><div class="run-detail"><span>Main:</span> 8×200m at 3:50/km · 60s full rest between</div></div>
+        <div class="run-block"><div class="run-title">Run 2 — Tempo intro · ~5km</div><div class="run-detail"><span>Main:</span> 2km at 4:30/km sustained</div></div>
+        <div class="run-block"><div class="run-title">Run 3 — Easy base · 3km at 5:30/km</div></div>
+
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin:28px 0 20px;">Week 2</div>
+        <div class="run-block"><div class="run-title">Run 1 — Speed volume · ~5km</div><div class="run-detail"><span>Main:</span> 10×200m at 3:45/km · 60s full rest between</div></div>
+        <div class="run-block"><div class="run-title">Run 2 — Tempo · ~6km</div><div class="run-detail"><span>Main:</span> 3km at 4:25/km sustained</div></div>
+        <div class="run-block"><div class="run-title">Run 3 — Easy base · 4km at 5:20/km</div></div>
+
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin:28px 0 20px;">Week 3</div>
+        <div class="run-block"><div class="run-title">Run 1 — Speed peak · ~5km</div><div class="run-detail"><span>Main:</span> 6×400m at 3:55/km · 90s full rest between</div></div>
+        <div class="run-block"><div class="run-title">Run 2 — Tempo peak · ~6km</div><div class="run-detail"><span>Main:</span> 4km at 4:20/km sustained</div></div>
+        <div class="run-block"><div class="run-title">Run 3 — Easy base · 4km at 5:10/km</div></div>
+
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin:28px 0 20px;">Week 4 — Deload</div>
+        <div class="run-block"><div class="run-title">Run 1 — Light speed · 4×200m at 4:00/km · 90s rest</div></div>
+        <div class="run-block"><div class="run-title">Run 2 — Easy · 3km at 5:30/km</div></div>
+        <div class="run-block"><div class="run-title">Run 3 — Easy · 3km at 5:40/km</div></div>
+      </div>
+
+      <div id="r5kb" class="sub-content" style="margin-top:28px;">
+        <div class="card-note" style="margin-bottom:24px;"><div class="note-lbl">5K Programme — Version B · 2 runs per week</div><div class="note-text">Threshold: 4:08/km · 5K target pace: 4:00–4:10/km</div></div>
+
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin-bottom:20px;">Week 1</div>
+        <div class="run-block"><div class="run-title">Run 1 — Speed base · 8×200m at 3:50/km · 60s rest</div></div>
+        <div class="run-block"><div class="run-title">Run 2 — Tempo intro · 3km at 4:30/km</div></div>
+
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin:28px 0 20px;">Week 2</div>
+        <div class="run-block"><div class="run-title">Run 1 — Speed volume · 10×200m at 3:45/km · 60s rest</div></div>
+        <div class="run-block"><div class="run-title">Run 2 — Tempo · 4km at 4:25/km</div></div>
+
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin:28px 0 20px;">Week 3</div>
+        <div class="run-block"><div class="run-title">Run 1 — Speed peak · 6×400m at 3:55/km · 90s rest</div></div>
+        <div class="run-block"><div class="run-title">Run 2 — Tempo peak · 5km at 4:20/km</div></div>
+
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin:28px 0 20px;">Week 4 — Deload</div>
+        <div class="run-block"><div class="run-title">Run 1 — Light speed · 4×200m at 4:00/km · 90s rest</div></div>
+        <div class="run-block"><div class="run-title">Run 2 — Easy · 4km at 5:30/km</div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BENCHMARKS -->
+  <div class="sub-content" id="wbench">
+    <div class="week-hero">
+      <div class="week-num" style="font-size:60px">Test</div>
+      <div>
+        <div class="week-title">Are You Ready for <em>Month 2?</em></div>
+        <div class="week-goal">"At the end of Week 4, test yourself. These numbers tell you if you're ready to increase load in Month 2. No ego — be honest."</div>
+      </div>
+    </div>
+    <div style="padding:48px 56px 64px;">
+      <table class="bench-table">
+        <thead><tr><th>Category</th><th>Exercise / Test</th><th>Minimum to advance</th><th>Your result</th></tr></thead>
+        <tbody>
+          <tr><td>Gym — Push</td><td>Flat bench press</td><td>Move 80kg for 5 clean reps</td><td></td></tr>
+          <tr><td>Gym — Pull</td><td>Weighted pull-up</td><td>Bodyweight +10kg for 5 reps</td><td></td></tr>
+          <tr><td>Gym — Legs</td><td>Back squat</td><td>Move 90kg for 6 clean reps</td><td></td></tr>
+          <tr><td>Gym — Legs</td><td>Romanian deadlift</td><td>Move 100kg for 8 controlled reps</td><td></td></tr>
+          <tr><td>HYROX</td><td>Circuit Base (Week 1)</td><td>Under 28 minutes for 3 rounds</td><td></td></tr>
+          <tr><td>HYROX</td><td>Every 4 min — calories rowed</td><td>At least 55 total calories across 6 rounds</td><td></td></tr>
+          <tr><td>10K</td><td>Long run pace</td><td>10km completed at 5:10/km or faster</td><td></td></tr>
+          <tr><td>10K</td><td>Threshold intervals</td><td>5×1km all under 4:25/km</td><td></td></tr>
+          <tr><td>5K</td><td>Speed session pace</td><td>400m repeats all under 4:05/km</td><td></td></tr>
+          <tr><td>5K</td><td>Tempo block</td><td>4km continuous under 4:35/km</td><td></td></tr>
+        </tbody>
+      </table>
+      <div class="card-note" style="margin-top:28px;"><div class="note-lbl">The rule</div><div class="note-text">If you hit 7 out of 10 — you're ready for Month 2. If you don't — repeat Week 3 before moving on. No shame in that. The program works when you're honest with yourself.</div></div>
+    </div>
+  </div>
+
+  <!-- MONTHS 2-3 -->
+  <div class="sub-content" id="w5">
+    <div class="week-hero">
+      <div class="week-num" style="font-size:60px">2&3</div>
+      <div>
+        <div class="week-title">Months 2 &amp; 3<br><em>Coming Soon</em></div>
+        <div class="week-goal">Added weekly as I train them. Follow @ormazaaes on Instagram for updates.</div>
+      </div>
+    </div>
+    <div class="session-grid">
+      <div class="card-locked"><div class="lock-title">Weeks 5–8 — Month 2</div><div class="lock-sub">Higher volume · Progressive overload · Increased HYROX intensity</div></div>
+      <div class="card-locked"><div class="lock-title">Weeks 9–12 — Month 3</div><div class="lock-sub">Peak strength · Max definition · HYROX race-ready simulation</div></div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ═══════════════════════════════
+     STANDALONE
+═══════════════════════════════ -->
+<div class="section" id="section-standalone">
+  <div class="section-intro">
+    <div class="big-title">Pick a session.<br><em>Train today.</em></div>
+    <p class="intro-sub" style="margin-top:20px;">No programme context needed. Show up, pick a category, and go. New sessions added every week.</p>
+  </div>
+  <div class="cat-nav">
+    <button class="cat-btn active" data-cat="all" onclick="filterFree(this)">All</button>
+    <button class="cat-btn" data-cat="push" onclick="filterFree(this)">Push</button>
+    <button class="cat-btn" data-cat="pull" onclick="filterFree(this)">Pull</button>
+    <button class="cat-btn" data-cat="legs" onclick="filterFree(this)">Legs</button>
+    <button class="cat-btn" data-cat="hyrox" onclick="filterFree(this)">HYROX</button>
+    <button class="cat-btn" data-cat="run" onclick="filterFree(this)">Run</button>
+  </div>
+  <div class="free-grid">
+
+    <!-- PUSH STANDALONE -->
+    <div class="free-card" data-cat="push">
+      <div class="card-tags"><span class="tag tag-g">Push</span><span class="tag">55 min</span><span class="tag">Chest · Shoulders · Triceps</span></div>
+      <div class="free-title">A — Heavy &amp; Simple</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See exercises</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body">
+        <div class="blk-lbl">Warm up: 5 min treadmill · push-up 2×10 · band pull-apart 2×15</div>
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Flat bench press barbell</div><div class="ex-vol">5×5<div class="ex-rest">2 min</div></div></li>
+          <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Overhead press barbell standing</div><div class="ex-vol">4×6<div class="ex-rest">90s</div></div></li>
+          <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Incline dumbbell press</div><div class="ex-vol">4×8<div class="ex-rest">90s</div></div></li>
+          <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">Cable lateral raise</div><div class="ex-vol">4×12<div class="ex-rest">60s</div></div></li>
+          <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Tricep dips weighted</div><div class="ex-vol">4×10<div class="ex-rest">75s</div></div></li>
+          <li class="ex-item"><span class="ex-num">06</span><div class="ex-name">Overhead tricep extension EZ bar</div><div class="ex-vol">3×12<div class="ex-rest">60s</div></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="free-card" data-cat="push">
+      <div class="card-tags"><span class="tag tag-g">Push</span><span class="tag">60 min</span><span class="tag">Volume + Pump</span></div>
+      <div class="free-title">B — Volume Pump</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See exercises</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body">
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Incline barbell press</div><div class="ex-vol">4×12<div class="ex-rest">75s</div></div></li>
+          <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Flat dumbbell press</div><div class="ex-vol">4×12<div class="ex-rest">75s</div></div></li>
+          <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Pec deck machine</div><div class="ex-vol">3×15<div class="ex-rest">60s</div></div></li>
+          <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">Lateral raise machine</div><div class="ex-vol">4×15<div class="ex-rest">45s</div></div></li>
+          <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Front raise cable alternating</div><div class="ex-vol">3×12/side<div class="ex-rest">60s</div></div></li>
+          <li class="ex-item"><span class="ex-num">06</span><div class="ex-name">Tricep rope pushdown</div><div class="ex-vol">4×15<div class="ex-rest">45s</div></div></li>
+          <li class="ex-item"><span class="ex-num">07</span><div class="ex-name">Single arm cable kickback</div><div class="ex-vol">3×15/side<div class="ex-rest">45s</div></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="free-card" data-cat="push">
+      <div class="card-tags"><span class="tag tag-g">Push</span><span class="tag">60 min</span><span class="tag">Supersets Only</span></div>
+      <div class="free-title">C — Supersets Only</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See exercises</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body">
+        <div class="blk-lbl">Superset A — 4 rounds · 75s rest after A2</div>
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">A1</span><div class="ex-name">Flat barbell press</div><div class="ex-vol">4×10</div></li>
+          <li class="ex-item"><span class="ex-num">A2</span><div class="ex-name">Push-up</div><div class="ex-vol">4×Failure</div></li>
+        </ul>
+        <div class="blk-lbl">Superset B — 4 rounds · 60s rest after B2</div>
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">B1</span><div class="ex-name">Seated DB shoulder press</div><div class="ex-vol">4×12</div></li>
+          <li class="ex-item"><span class="ex-num">B2</span><div class="ex-name">Lateral raise</div><div class="ex-vol">4×15</div></li>
+        </ul>
+        <div class="blk-lbl">Superset C — 3 rounds · 60s rest after C2</div>
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">C1</span><div class="ex-name">Low cable crossover</div><div class="ex-vol">3×15</div></li>
+          <li class="ex-item"><span class="ex-num">C2</span><div class="ex-name">Diamond push-up</div><div class="ex-vol">3×Failure</div></li>
+        </ul>
+        <div class="info-box">Finisher: Lateral raise drop set ×3 — 15 reps heavy → drop → 15 → drop → failure</div>
+      </div>
+    </div>
+
+    <div class="free-card" data-cat="push">
+      <div class="card-tags"><span class="tag tag-g">Push</span><span class="tag">60 min</span><span class="tag">Shoulders Focus</span></div>
+      <div class="free-title">D — Shoulders Focus</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See exercises</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body">
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Seated DB shoulder press</div><div class="ex-vol">5×8<div class="ex-rest">90s</div></div></li>
+          <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Arnold press</div><div class="ex-vol">4×10<div class="ex-rest">75s</div></div></li>
+          <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Lateral raise cable</div><div class="ex-vol">5×15<div class="ex-rest">45s</div></div></li>
+          <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">Rear delt fly machine</div><div class="ex-vol">4×15<div class="ex-rest">60s</div></div></li>
+          <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Upright row barbell</div><div class="ex-vol">3×12<div class="ex-rest">75s</div></div></li>
+          <li class="ex-item"><span class="ex-num">06</span><div class="ex-name">Incline dumbbell press</div><div class="ex-vol">3×12<div class="ex-rest">75s</div></div></li>
+          <li class="ex-item"><span class="ex-num">07</span><div class="ex-name">Tricep pushdown rope</div><div class="ex-vol">3×15<div class="ex-rest">60s</div></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="free-card" data-cat="push">
+      <div class="card-tags"><span class="tag tag-g">Push</span><span class="tag">65 min</span><span class="tag">Eccentric Overload</span></div>
+      <div class="free-title">E — Eccentric Overload</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See exercises</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body">
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Flat dumbbell press<small>Tempo 5-1-1</small></div><div class="ex-vol">5×6<div class="ex-rest">2 min</div></div></li>
+          <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Incline barbell press<small>Tempo 4-1-1</small></div><div class="ex-vol">4×6<div class="ex-rest">90s</div></div></li>
+          <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Cable fly high to low<small>Tempo 3-1-2</small></div><div class="ex-vol">3×12<div class="ex-rest">75s</div></div></li>
+          <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">Lateral raise dumbbell<small>Tempo 3-0-1</small></div><div class="ex-vol">4×12<div class="ex-rest">60s</div></div></li>
+          <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Tricep overhead EZ bar<small>Tempo 4-1-1</small></div><div class="ex-vol">4×10<div class="ex-rest">75s</div></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- PULL STANDALONE -->
+    <div class="free-card" data-cat="pull">
+      <div class="card-tags"><span class="tag tag-g">Pull</span><span class="tag">55 min</span><span class="tag">Thickness Builder</span></div>
+      <div class="free-title">A — Thickness Builder</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See exercises</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body">
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Barbell row overhand</div><div class="ex-vol">5×6<div class="ex-rest">2 min</div></div></li>
+          <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Weighted pull-up</div><div class="ex-vol">4×6<div class="ex-rest">90s</div></div></li>
+          <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Seated cable row close grip</div><div class="ex-vol">4×10<div class="ex-rest">75s</div></div></li>
+          <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">Chest supported DB row</div><div class="ex-vol">3×12<div class="ex-rest">75s</div></div></li>
+          <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Face pull rope</div><div class="ex-vol">3×15<div class="ex-rest">60s</div></div></li>
+          <li class="ex-item"><span class="ex-num">06</span><div class="ex-name">Hammer curl</div><div class="ex-vol">3×12<div class="ex-rest">60s</div></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="free-card" data-cat="pull">
+      <div class="card-tags"><span class="tag tag-g">Pull</span><span class="tag">55 min</span><span class="tag">Width &amp; Detail</span></div>
+      <div class="free-title">B — Width &amp; Detail</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See exercises</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body">
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Wide grip lat pulldown</div><div class="ex-vol">5×10<div class="ex-rest">90s</div></div></li>
+          <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Single arm dumbbell row</div><div class="ex-vol">4×10/side<div class="ex-rest">75s</div></div></li>
+          <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Straight arm cable pulldown</div><div class="ex-vol">4×15<div class="ex-rest">60s</div></div></li>
+          <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">Cable row wide grip</div><div class="ex-vol">3×12<div class="ex-rest">75s</div></div></li>
+          <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Rear delt cable fly</div><div class="ex-vol">3×15<div class="ex-rest">60s</div></div></li>
+          <li class="ex-item"><span class="ex-num">06</span><div class="ex-name">EZ bar curl</div><div class="ex-vol">4×12<div class="ex-rest">60s</div></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="free-card" data-cat="pull">
+      <div class="card-tags"><span class="tag tag-g">Pull</span><span class="tag">65 min</span><span class="tag">Cluster &amp; Density</span></div>
+      <div class="free-title">C — Cluster &amp; Density</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See exercises</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body">
+        <div class="blk-lbl">Strength block · 15 min</div>
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Pendlay row</div><div class="ex-vol">5×5<div class="ex-rest">2 min</div></div></li>
+          <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Weighted pull-up</div><div class="ex-vol">4×5<div class="ex-rest">90s</div></div></li>
+        </ul>
+        <div class="blk-lbl">Density supersets · 20 min</div>
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">A1</span><div class="ex-name">Lat pulldown underhand</div><div class="ex-vol">4×12<div class="ex-rest">60s after A2</div></div></li>
+          <li class="ex-item"><span class="ex-num">A2</span><div class="ex-name">Pullover dumbbell</div><div class="ex-vol">4×12<div class="ex-rest">60s</div></div></li>
+          <li class="ex-item"><span class="ex-num">B1</span><div class="ex-name">T-bar row</div><div class="ex-vol">3×10<div class="ex-rest">60s after B2</div></div></li>
+          <li class="ex-item"><span class="ex-num">B2</span><div class="ex-name">Face pull</div><div class="ex-vol">3×15<div class="ex-rest">60s</div></div></li>
+        </ul>
+        <div class="info-box"><span class="info-lbl">Bicep cluster — 4 clusters · 90s between</span>6 reps + 10s rest + 6 reps + 10s rest + 6 reps = 1 cluster · Barbell curl</div>
+      </div>
+    </div>
+
+    <div class="free-card" data-cat="pull">
+      <div class="card-tags"><span class="tag tag-g">Pull</span><span class="tag">60 min</span><span class="tag">Straight Sets Heavy</span></div>
+      <div class="free-title">D — Straight Sets Heavy</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See exercises</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body">
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Conventional deadlift</div><div class="ex-vol">5×4<div class="ex-rest">3 min</div></div></li>
+          <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Weighted pull-up</div><div class="ex-vol">5×5<div class="ex-rest">2 min</div></div></li>
+          <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Barbell row</div><div class="ex-vol">4×6<div class="ex-rest">90s</div></div></li>
+          <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">Face pull rope</div><div class="ex-vol">4×15<div class="ex-rest">60s</div></div></li>
+          <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Barbell curl</div><div class="ex-vol">4×8<div class="ex-rest">75s</div></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="free-card" data-cat="pull">
+      <div class="card-tags"><span class="tag tag-g">Pull</span><span class="tag">55 min</span><span class="tag">Unilateral Focus</span></div>
+      <div class="free-title">E — Unilateral Focus</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See exercises</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body">
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Single arm cable row</div><div class="ex-vol">4×12/side<div class="ex-rest">60s</div></div></li>
+          <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Single arm lat pulldown</div><div class="ex-vol">4×12/side<div class="ex-rest">60s</div></div></li>
+          <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Single arm dumbbell row</div><div class="ex-vol">4×10/side<div class="ex-rest">75s</div></div></li>
+          <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">Single arm face pull</div><div class="ex-vol">3×15/side<div class="ex-rest">60s</div></div></li>
+          <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Concentration curl</div><div class="ex-vol">3×12/side<div class="ex-rest">60s</div></div></li>
+          <li class="ex-item"><span class="ex-num">06</span><div class="ex-name">Hammer curl alternating</div><div class="ex-vol">3×12/side<div class="ex-rest">60s</div></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- LEGS STANDALONE -->
+    <div class="free-card" data-cat="legs">
+      <div class="card-tags"><span class="tag tag-g">Legs</span><span class="tag">60 min</span><span class="tag">Quad Dominant</span></div>
+      <div class="free-title">A — Quad Dominant</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See exercises</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body">
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Back squat</div><div class="ex-vol">5×5<div class="ex-rest">2.5 min</div></div></li>
+          <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Leg press</div><div class="ex-vol">4×10<div class="ex-rest">90s</div></div></li>
+          <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Bulgarian split squat</div><div class="ex-vol">4×10/leg<div class="ex-rest">75s</div></div></li>
+          <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">Leg extension machine</div><div class="ex-vol">4×15<div class="ex-rest">60s</div></div></li>
+          <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Walking lunge dumbbell</div><div class="ex-vol">3×12/leg<div class="ex-rest">75s</div></div></li>
+          <li class="ex-item"><span class="ex-num">06</span><div class="ex-name">Standing calf raise</div><div class="ex-vol">4×15<div class="ex-rest">45s</div></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="free-card" data-cat="legs">
+      <div class="card-tags"><span class="tag tag-g">Legs</span><span class="tag">60 min</span><span class="tag">Posterior Chain</span></div>
+      <div class="free-title">B — Posterior Chain</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See exercises</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body">
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Romanian deadlift</div><div class="ex-vol">5×6<div class="ex-rest">2 min</div></div></li>
+          <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Barbell hip thrust</div><div class="ex-vol">5×8<div class="ex-rest">90s</div></div></li>
+          <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Sumo deadlift</div><div class="ex-vol">4×6<div class="ex-rest">2.5 min</div></div></li>
+          <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">Lying leg curl</div><div class="ex-vol">4×12<div class="ex-rest">75s</div></div></li>
+          <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Good morning barbell</div><div class="ex-vol">3×10<div class="ex-rest">90s</div></div></li>
+          <li class="ex-item"><span class="ex-num">06</span><div class="ex-name">Seated calf raise</div><div class="ex-vol">4×15<div class="ex-rest">45s</div></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="free-card" data-cat="legs">
+      <div class="card-tags"><span class="tag tag-g">Legs</span><span class="tag">65 min</span><span class="tag">Unilateral Strength</span></div>
+      <div class="free-title">C — Unilateral Strength</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See exercises</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body">
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Front squat</div><div class="ex-vol">4×6<div class="ex-rest">2 min</div></div></li>
+          <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Bulgarian split squat barbell</div><div class="ex-vol">4×8/leg<div class="ex-rest">90s</div></div></li>
+          <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Step-up lateral barbell</div><div class="ex-vol">4×10/leg<div class="ex-rest">75s</div></div></li>
+          <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">Unilateral hip thrust dumbbell</div><div class="ex-vol">3×12/leg<div class="ex-rest">75s</div></div></li>
+          <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Single leg press</div><div class="ex-vol">3×12/leg<div class="ex-rest">60s</div></div></li>
+          <li class="ex-item"><span class="ex-num">06</span><div class="ex-name">Single leg calf raise</div><div class="ex-vol">4×15/leg<div class="ex-rest">45s</div></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="free-card" data-cat="legs">
+      <div class="card-tags"><span class="tag tag-g">Legs</span><span class="tag">60 min</span><span class="tag">Volume &amp; Pump</span></div>
+      <div class="free-title">D — Volume &amp; Pump</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See exercises</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body">
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Back squat</div><div class="ex-vol">4×12<div class="ex-rest">90s</div></div></li>
+          <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Leg press feet high</div><div class="ex-vol">4×15<div class="ex-rest">75s</div></div></li>
+          <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Hack squat</div><div class="ex-vol">3×12<div class="ex-rest">90s</div></div></li>
+          <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">Leg extension</div><div class="ex-vol">4×20<div class="ex-rest">45s</div></div></li>
+          <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Seated leg curl</div><div class="ex-vol">4×15<div class="ex-rest">60s</div></div></li>
+          <li class="ex-item"><span class="ex-num">06</span><div class="ex-name">Walking lunge bodyweight</div><div class="ex-vol">3×20/leg<div class="ex-rest">60s</div></div></li>
+          <li class="ex-item"><span class="ex-num">07</span><div class="ex-name">Calf raise standing</div><div class="ex-vol">5×20<div class="ex-rest">30s</div></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="free-card" data-cat="legs">
+      <div class="card-tags"><span class="tag tag-g">Legs</span><span class="tag">55 min</span><span class="tag">Heavy Compound</span></div>
+      <div class="free-title">E — Heavy Lower Compound</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See exercises</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body">
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Back squat</div><div class="ex-vol">5×4<div class="ex-rest">3 min</div></div></li>
+          <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Conventional deadlift</div><div class="ex-vol">4×4<div class="ex-rest">3 min</div></div></li>
+          <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Barbell hip thrust</div><div class="ex-vol">4×8<div class="ex-rest">90s</div></div></li>
+          <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">Lying leg curl</div><div class="ex-vol">3×10<div class="ex-rest">75s</div></div></li>
+          <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Standing calf raise barbell</div><div class="ex-vol">4×12<div class="ex-rest">60s</div></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- HYROX STANDALONE -->
+    <div class="free-card" data-cat="hyrox">
+      <div class="card-tags"><span class="tag tag-g">HYROX</span><span class="tag">45 min</span><span class="tag">Machine Conditioning</span></div>
+      <div class="free-title">A — Machine Conditioning · @ormazaaes</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See session</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body">
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">1</span><div class="ex-name">Row erg</div><div class="ex-vol">1,000m</div></li>
+          <li class="ex-item"><span class="ex-num">2</span><div class="ex-name">Ski erg</div><div class="ex-vol">1,000m</div></li>
+          <li class="ex-item"><span class="ex-num">3</span><div class="ex-name">Run</div><div class="ex-vol">500m</div></li>
+        </ul>
+        <div class="info-box">3 rounds · Record total time</div>
+      </div>
+    </div>
+
+    <div class="free-card" data-cat="hyrox">
+      <div class="card-tags"><span class="tag tag-g">HYROX</span><span class="tag">60 min</span><span class="tag">Descending Ladder</span></div>
+      <div class="free-title">B — Descending Ladder · @ormazaaes</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See session</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body">
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">1</span><div class="ex-name">Run + Wall balls<small>9kg men / 6kg women</small></div><div class="ex-vol">1,000m + 50</div></li>
+          <li class="ex-item"><span class="ex-num">2</span><div class="ex-name">Run + KB swings<small>24kg men / 16kg women</small></div><div class="ex-vol">800m + 40</div></li>
+          <li class="ex-item"><span class="ex-num">3</span><div class="ex-name">Run + Burpees to target</div><div class="ex-vol">600m + 30</div></li>
+          <li class="ex-item"><span class="ex-num">4</span><div class="ex-name">Run + Dumbbell thrusters<small>2×22.5kg men</small></div><div class="ex-vol">400m + 20</div></li>
+          <li class="ex-item"><span class="ex-num">5</span><div class="ex-name">Run + Box jump overs</div><div class="ex-vol">200m + 10</div></li>
+        </ul>
+        <div class="info-box">Complete for time · Record total time</div>
+      </div>
+    </div>
+
+    <div class="free-card" data-cat="hyrox">
+      <div class="card-tags"><span class="tag tag-g">HYROX</span><span class="tag">55 min</span><span class="tag">Sled Density Builder</span></div>
+      <div class="free-title">C — Sled Density Builder · @ormazaaes</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See session</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body">
+        <div class="blk-lbl">5 rounds for time:</div>
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">1</span><div class="ex-name">Run</div><div class="ex-vol">100m</div></li>
+          <li class="ex-item"><span class="ex-num">2</span><div class="ex-name">Sled push<small>125kg men / 75kg women</small></div><div class="ex-vol">25m</div></li>
+          <li class="ex-item"><span class="ex-num">3</span><div class="ex-name">Sled pull<small>75kg men / 50kg women</small></div><div class="ex-vol">25m</div></li>
+          <li class="ex-item"><span class="ex-num">4</span><div class="ex-name">Push-ups</div><div class="ex-vol">10 reps</div></li>
+          <li class="ex-item"><span class="ex-num">5</span><div class="ex-name">Sandbag cleans<small>45kg men / 30kg women</small></div><div class="ex-vol">10 reps</div></li>
+        </ul>
+        <div class="info-box">Record total time</div>
+      </div>
+    </div>
+
+    <div class="free-card" data-cat="hyrox">
+      <div class="card-tags"><span class="tag tag-g">HYROX</span><span class="tag">35 min</span><span class="tag">Every 4 Minutes</span></div>
+      <div class="free-title">D — Every 4 Minutes · @ormazaaes</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See session</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body">
+        <div class="blk-lbl">Every 4 min × 6 rounds (work 3 min · rest 1 min):</div>
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">1</span><div class="ex-name">Ski erg</div><div class="ex-vol">250m</div></li>
+          <li class="ex-item"><span class="ex-num">2</span><div class="ex-name">Wall balls<small>9kg men / 6kg women</small></div><div class="ex-vol">10 reps</div></li>
+          <li class="ex-item"><span class="ex-num">3</span><div class="ex-name">Burpee broad jumps</div><div class="ex-vol">10 reps</div></li>
+          <li class="ex-item"><span class="ex-num">4</span><div class="ex-name">Row erg</div><div class="ex-vol">Max cal<div class="ex-rest">remaining time</div></div></li>
+        </ul>
+        <div class="info-box">Score: total calories rowed across all 6 rounds</div>
+      </div>
+    </div>
+
+    <div class="free-card" data-cat="hyrox">
+      <div class="card-tags"><span class="tag tag-g">HYROX</span><span class="tag">30 min</span><span class="tag">AMRAP 30 Aerobic</span></div>
+      <div class="free-title">E — AMRAP 30 Aerobic · @ormazaaes</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See session</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body">
+        <div class="blk-lbl">AMRAP 30 minutes:</div>
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">1</span><div class="ex-name">Run</div><div class="ex-vol">1,000m</div></li>
+          <li class="ex-item"><span class="ex-num">2</span><div class="ex-name">Sled pull<small>75kg men / 50kg women</small></div><div class="ex-vol">50m</div></li>
+          <li class="ex-item"><span class="ex-num">3</span><div class="ex-name">Double KB farmer carry<small>24kg ea men / 16kg women</small></div><div class="ex-vol">50m</div></li>
+          <li class="ex-item"><span class="ex-num">4</span><div class="ex-name">Bodyweight lunges</div><div class="ex-vol">25 reps</div></li>
+        </ul>
+        <div class="info-box">Score: total rounds completed</div>
+      </div>
+    </div>
+
+    <div class="free-card" data-cat="hyrox">
+      <div class="card-tags"><span class="tag tag-g">HYROX</span><span class="tag">45 min</span><span class="tag">Strength Focus</span></div>
+      <div class="free-title">F — Strength Focus · @ormazaaes</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See session</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body">
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Barbell thrusters<small>Go as heavy as possible</small></div><div class="ex-vol">5×5<div class="ex-rest">3 min</div></div></li>
+          <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Suitcase deadlift<small>Heavy dumbbells or double barbell</small></div><div class="ex-vol">5×5<div class="ex-rest">3 min</div></div></li>
+          <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Back squat<small>As heavy as possible</small></div><div class="ex-vol">5×5<div class="ex-rest">3 min</div></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="free-card" data-cat="hyrox">
+      <div class="card-tags"><span class="tag tag-g">HYROX</span><span class="tag">40 min</span><span class="tag">Every 2 Minutes</span></div>
+      <div class="free-title">G — Every 2 Minutes · @ormazaaes</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See session</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body">
+        <div class="blk-lbl">Every 2 min for 40 minutes:</div>
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">1</span><div class="ex-name">Burpees</div><div class="ex-vol">10 reps</div></li>
+          <li class="ex-item"><span class="ex-num">2</span><div class="ex-name">Wall balls<small>9kg men / 6kg women</small></div><div class="ex-vol">15 reps</div></li>
+          <li class="ex-item"><span class="ex-num">3</span><div class="ex-name">Row erg</div><div class="ex-vol">Max dist<div class="ex-rest">remaining time</div></div></li>
+        </ul>
+        <div class="info-box">Score: total meters rowed across all rounds</div>
+      </div>
+    </div>
+
+    <!-- RUNNING STANDALONE -->
+    <div class="free-card" data-cat="run">
+      <div class="card-tags"><span class="tag tag-g">Run</span><span class="tag">10K</span><span class="tag">Long Easy</span></div>
+      <div class="free-title">10K A — Long Easy</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See session</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body"><div class="run-detail"><span>Warm up:</span> 500m walk + 500m easy jog · <span>Main:</span> 8km zone 2 — conversation pace · <span>Cool down:</span> 500m jog + 500m walk</div></div>
+    </div>
+    <div class="free-card" data-cat="run">
+      <div class="card-tags"><span class="tag tag-g">Run</span><span class="tag">10K</span><span class="tag">Progressive Long</span></div>
+      <div class="free-title">10K B — Progressive Long</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See session</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body"><div class="run-detail"><span>Warm up:</span> 500m walk + 1km easy jog · <span>Main:</span> 3km easy → 3km moderate → 2km hard · <span>Cool down:</span> 1km jog + 500m walk</div></div>
+    </div>
+    <div class="free-card" data-cat="run">
+      <div class="card-tags"><span class="tag tag-g">Run</span><span class="tag">10K</span><span class="tag">Threshold Intervals</span></div>
+      <div class="free-title">10K C — Threshold Intervals</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See session</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body"><div class="run-detail"><span>Warm up:</span> 500m walk + 1.5km easy jog · <span>Main:</span> 5×1,000m at threshold pace · 3 min jog between · <span>Cool down:</span> 1km jog + 500m walk</div></div>
+    </div>
+    <div class="free-card" data-cat="run">
+      <div class="card-tags"><span class="tag tag-g">Run</span><span class="tag">10K</span><span class="tag">Tempo Sustained</span></div>
+      <div class="free-title">10K D — Tempo Sustained</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See session</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body"><div class="run-detail"><span>Warm up:</span> 500m walk + 1km easy jog · <span>Main:</span> 5km comfortably hard · <span>Cool down:</span> 1km jog + 500m walk</div></div>
+    </div>
+    <div class="free-card" data-cat="run">
+      <div class="card-tags"><span class="tag tag-g">Run</span><span class="tag">10K</span><span class="tag">Negative Split</span></div>
+      <div class="free-title">10K E — Negative Split</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See session</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body"><div class="run-detail"><span>Warm up:</span> 500m walk + 500m easy jog · <span>Main:</span> 10km — first 5km easy · second 5km faster each km · <span>Cool down:</span> 500m walk</div></div>
+    </div>
+    <div class="free-card" data-cat="run">
+      <div class="card-tags"><span class="tag tag-g">Run</span><span class="tag">10K</span><span class="tag">Cruise Intervals</span></div>
+      <div class="free-title">10K F — Cruise Intervals</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See session</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body"><div class="run-detail"><span>Warm up:</span> 500m walk + 1km easy jog · <span>Main:</span> 4×2km moderate-hard · 2 min jog between · <span>Cool down:</span> 1km jog + 500m walk</div></div>
+    </div>
+    <div class="free-card" data-cat="run">
+      <div class="card-tags"><span class="tag tag-g">Run</span><span class="tag">5K</span><span class="tag">Speed Base 200s</span></div>
+      <div class="free-title">5K A — Speed Base 200s</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See session</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body"><div class="run-detail"><span>Warm up:</span> 500m walk + 1km easy jog · <span>Main:</span> 10×200m fast · 60s full rest · <span>Cool down:</span> 1km jog + 500m walk</div></div>
+    </div>
+    <div class="free-card" data-cat="run">
+      <div class="card-tags"><span class="tag tag-g">Run</span><span class="tag">5K</span><span class="tag">Tempo Block</span></div>
+      <div class="free-title">5K B — Tempo Block</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See session</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body"><div class="run-detail"><span>Warm up:</span> 500m walk + 1km easy jog · <span>Main:</span> 4km hard sustained pace · <span>Cool down:</span> 1km jog + 500m walk</div></div>
+    </div>
+    <div class="free-card" data-cat="run">
+      <div class="card-tags"><span class="tag tag-g">Run</span><span class="tag">5K</span><span class="tag">400m Repeats</span></div>
+      <div class="free-title">5K C — 400m Repeats</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See session</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body"><div class="run-detail"><span>Warm up:</span> 500m walk + 1km easy jog · <span>Main:</span> 8×400m fast · 90s full rest · <span>Cool down:</span> 1km jog + 500m walk</div></div>
+    </div>
+    <div class="free-card" data-cat="run">
+      <div class="card-tags"><span class="tag tag-g">Run</span><span class="tag">5K</span><span class="tag">Fartlek Free</span></div>
+      <div class="free-title">5K D — Fartlek Free</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See session</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body"><div class="run-detail"><span>Warm up:</span> 500m walk + 500m easy jog · <span>Main:</span> 30–40 min no GPS — alternate hard and easy by feel · <span>Cool down:</span> 500m walk</div></div>
+    </div>
+    <div class="free-card" data-cat="run">
+      <div class="card-tags"><span class="tag tag-g">Run</span><span class="tag">5K</span><span class="tag">800m Power</span></div>
+      <div class="free-title">5K E — 800m Power</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See session</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body"><div class="run-detail"><span>Warm up:</span> 500m walk + 1.5km easy jog · <span>Main:</span> 6×800m hard · 2 min jog between · <span>Cool down:</span> 1km jog + 500m walk</div></div>
+    </div>
+    <div class="free-card" data-cat="run">
+      <div class="card-tags"><span class="tag tag-g">Run</span><span class="tag">5K</span><span class="tag">Pyramid</span></div>
+      <div class="free-title">5K F — Pyramid</div>
+      <button class="card-toggle" onclick="tog(this)"><span>See session</span><span class="tog-arrow">▶</span></button>
+      <div class="card-body"><div class="run-detail"><span>Warm up:</span> 500m walk + 1km easy jog · <span>Main:</span> 200m–400m–600m–800m–600m–400m–200m hard · rest = time of rep · <span>Cool down:</span> 1km jog + 500m walk</div></div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════
+     TRAIN BY MOOD
+═══════════════════════════════ -->
+<div class="section" id="section-mood">
+
+  <div class="section-intro">
+    <div class="big-title">How do you<br>feel <em>today?</em></div>
+    <p class="intro-sub" style="margin-top:20px;">Your mood decides your session. Your session decides your music. Each number is a complete workout — adapt the weight to the reps.</p>
+  </div>
+
+  <div class="mood-grid">
+    <div class="mood-card" onclick="openMood('savage')"><div class="mood-num">01</div><div class="mood-name">Savage</div><div class="mood-line"></div><div class="mood-desc">Nothing can stop you today</div></div>
+    <div class="mood-card" onclick="openMood('flow')"><div class="mood-num">02</div><div class="mood-name">Flow</div><div class="mood-line"></div><div class="mood-desc">Energy is high. Rhythm is there.</div></div>
+    <div class="mood-card" onclick="openMood('focus')"><div class="mood-num">03</div><div class="mood-name">Focus</div><div class="mood-line"></div><div class="mood-desc">Locked in. Train with precision.</div></div>
+    <div class="mood-card" onclick="openMood('forty')"><div class="mood-num">04</div><div class="mood-name">40%</div><div class="mood-line"></div><div class="mood-desc">Didn't want to come. But you're here.</div></div>
+  </div>
+
+  <!-- SAVAGE -->
+  <div class="mood-detail" id="mood-savage">
+    <div class="mood-dh"><div class="mood-dh-title">01 — <em>Savage</em></div><button class="mood-back" onclick="closeMood()">← Back to moods</button></div>
+    <div class="mood-phil"><div class="mood-phil-text">These are the sessions I save for the days I walk into the gym and don't want to talk to anyone. Head down, headphones in, full gas. <strong>Pick one and don't leave until it's done.</strong></div></div>
+    <div class="mood-body">
+      <div class="mood-workout">
+        <div class="col-lbl">15 sessions — all categories</div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--muted);margin-bottom:16px;">PUSH</div>
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Push A · Heavy &amp; Simple<small>Flat bench 5×5 · OHP 4×6 · Incline DB 4×8 · Lateral cable 4×12 · Dips 4×10 · OHtricep 3×12</small></div></li>
+          <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Push E · Eccentric Overload<small>Flat DB 5×6 tempo 5-1-1 · Incline bar 4×6 · Cable fly 3×12 · Lateral raise 4×12 · Tricep OH 4×10</small></div></li>
+        </ul>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--muted);margin:16px 0 8px;">PULL</div>
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Pull D · Straight Sets Heavy<small>Deadlift 5×4 · Pull-up 5×5 · Row 4×6 · Face pull 4×15 · Barbell curl 4×8</small></div></li>
+          <li class="ex-item"><span class="ex-num">15</span><div class="ex-name">Pull Heavy Peak<small>Row overhand 6×4 · Pull-up 5×4 · Shrug 4×8 · Rack pull 4×5 · Curl 4×6</small></div></li>
+        </ul>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--muted);margin:16px 0 8px;">LEGS</div>
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">Legs E · Heavy Lower Compound<small>Squat 5×4 · Deadlift 4×4 · Hip thrust 4×8 · Leg curl 3×10 · Calf raise 4×12</small></div></li>
+          <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Legs B · Posterior Chain<small>RDL 5×6 · Hip thrust 5×8 · Sumo DL 4×6 · Leg curl 4×12 · Good morning 3×10 · Calf 4×15</small></div></li>
+          <li class="ex-item"><span class="ex-num">13</span><div class="ex-name">Lower Body Power<small>Squat 6×3 at 85%+ · Power clean 5×3 · Box jump 5×5 · RDL 4×6 · Hip thrust 4×8</small></div></li>
+        </ul>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--muted);margin:16px 0 8px;">HYROX</div>
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">06</span><div class="ex-name">Descending Ladder<small>1km+50WB · 800m+40KB · 600m+30burp · 400m+20thrust · 200m+10box · For time</small></div></li>
+          <li class="ex-item"><span class="ex-num">07</span><div class="ex-name">Strength Focus<small>Thrusters 5×5 · Suitcase DL 5×5 · Squat 5×5 · All as heavy as possible</small></div></li>
+          <li class="ex-item"><span class="ex-num">08</span><div class="ex-name">Every 2 Minutes · 40 min<small>10 burpees · 15 wall balls · Max row · Score: total meters</small></div></li>
+          <li class="ex-item"><span class="ex-num">12</span><div class="ex-name">Sled &amp; Run Power<small>Sled push 6×25m · Sled pull 6×25m · 1km race pace · Repeat lighter · Farmer carry 4×40m</small></div></li>
+        </ul>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--muted);margin:16px 0 8px;">FULL UPPER</div>
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">11</span><div class="ex-name">Full Upper Heavy<small>Bench 5×5 · Pull-up 5×5 · OHP 4×5 · Pendlay row 4×5 · Dips 3×8 · Curl 3×8</small></div></li>
+        </ul>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--muted);margin:16px 0 8px;">RUNNING</div>
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">09</span><div class="ex-name">5K E · 800m Power<small>WU + 6×800m hard · 2 min jog between · Cool down</small></div></li>
+          <li class="ex-item"><span class="ex-num">10</span><div class="ex-name">5K F · Pyramid<small>200–400–600–800–600–400–200m hard · rest = rep time</small></div></li>
+          <li class="ex-item"><span class="ex-num">14</span><div class="ex-name">10K C · Threshold Intervals<small>WU + 5×1,000m at threshold · 3 min jog between · Cool down</small></div></li>
+        </ul>
+      </div>
+      <div class="mood-music">
+        <div class="col-lbl">Music · Savage mode</div>
+        <div class="music-desc">Hard techno. High BPM. No melody — just pressure. The kind that makes the heavy sets feel light.</div>
+        <a class="spotify-btn" href="https://open.spotify.com/playlist/5Eh9JBrgaYcljxNlqoUOyP?si=54c85b5305c444c0" target="_blank">Open playlist on Spotify →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOW -->
+  <div class="mood-detail" id="mood-flow">
+    <div class="mood-dh"><div class="mood-dh-title">02 — <em>Flow</em></div><button class="mood-back" onclick="closeMood()">← Back to moods</button></div>
+    <div class="mood-phil"><div class="mood-phil-text">Flow days are my favourite. The music is right, the body feels good, and the session just happens. <strong>Not your best ever — but close. Pick something and let it run.</strong></div></div>
+    <div class="mood-body">
+      <div class="mood-workout">
+        <div class="col-lbl">15 sessions — all categories</div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--muted);margin-bottom:16px;">PUSH</div>
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Push B · Volume Pump<small>Incline bar 4×12 · Flat DB 4×12 · Pec deck 3×15 · Lateral machine 4×15 · Front raise 3×12 · Pushdown 4×15 · Kickback 3×15</small></div></li>
+          <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Push C · Supersets Only<small>SS A: Flat press 10 + Push-up fail · SS B: DB shoulder 12 + Lateral 15 · SS C: Cable cross 15 + Diamond fail · Finisher: lateral drop sets</small></div></li>
+          <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Push D · Shoulders Focus<small>DB press 5×8 · Arnold 4×10 · Lateral cable 5×15 · Rear delt 4×15 · Upright row 3×12 · Incline DB 3×12 · Pushdown 3×15</small></div></li>
+        </ul>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--muted);margin:16px 0 8px;">PULL</div>
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">Pull A · Thickness Builder<small>Row 5×6 · Pull-up 4×6 · Seated row 4×10 · Chest supported 3×12 · Face pull 3×15 · Hammer curl 3×12</small></div></li>
+          <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Pull B · Width &amp; Detail<small>Wide pulldown 5×10 · Single arm row 4×10 · Straight arm 4×15 · Wide row 3×12 · Rear delt fly 3×15 · EZ curl 4×12</small></div></li>
+          <li class="ex-item"><span class="ex-num">06</span><div class="ex-name">Pull C · Cluster &amp; Density<small>Pendlay 5×5 · Pull-up 4×5 · Pulldown+pullover SS · T-bar+face pull SS · Bicep clusters</small></div></li>
+        </ul>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--muted);margin:16px 0 8px;">LEGS</div>
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">07</span><div class="ex-name">Legs A · Quad Dominant<small>Squat 5×5 · Leg press 4×10 · Bulgarian SS 4×10 · Leg ext 4×15 · Lunge 3×12 · Calf 4×15</small></div></li>
+          <li class="ex-item"><span class="ex-num">08</span><div class="ex-name">Legs C · Unilateral Strength<small>Front squat 4×6 · Bulgarian bar 4×8 · Step-up 4×10 · Unilateral hip thrust 3×12 · SL press 3×12 · SL calf 4×15</small></div></li>
+          <li class="ex-item"><span class="ex-num">09</span><div class="ex-name">Legs D · Volume &amp; Pump<small>Squat 4×12 · Leg press high 4×15 · Hack squat 3×12 · Ext 4×20 · Seated curl 4×15 · Lunge BW 3×20 · Calf 5×20</small></div></li>
+        </ul>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--muted);margin:16px 0 8px;">HYROX</div>
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">10</span><div class="ex-name">Machine Conditioning<small>3 rounds: 1km row · 1km ski erg · 500m run · For time</small></div></li>
+          <li class="ex-item"><span class="ex-num">11</span><div class="ex-name">Every 4 Minutes<small>6 rounds: 250m ski · 10 WB · 10 burpee broad · Max cal row · Score: total cal</small></div></li>
+          <li class="ex-item"><span class="ex-num">12</span><div class="ex-name">AMRAP 30 Aerobic<small>1km run · 50m sled pull · 50m farmer carry · 25 BW lunges · Score: rounds</small></div></li>
+        </ul>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--muted);margin:16px 0 8px;">RUNNING</div>
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">13</span><div class="ex-name">10K B · Progressive Long<small>WU + 3km easy → 3km mod → 2km hard · Cool down</small></div></li>
+          <li class="ex-item"><span class="ex-num">14</span><div class="ex-name">10K F · Cruise Intervals<small>WU + 4×2km moderate-hard · 2 min jog between · Cool down</small></div></li>
+          <li class="ex-item"><span class="ex-num">15</span><div class="ex-name">5K A · Speed Base 200s<small>WU + 10×200m fast · 60s full rest · Cool down</small></div></li>
+        </ul>
+      </div>
+      <div class="mood-music">
+        <div class="col-lbl">Music · Flow state</div>
+        <div class="music-desc">Deep house. Progressive builds. The kind that carries you through the session without you noticing.</div>
+        <a class="spotify-btn" href="https://open.spotify.com/playlist/7fYnagGaQ3kLRQdDjJEH1V?si=cebe96460c444d03" target="_blank">Open playlist on Spotify →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOCUS -->
+  <div class="mood-detail" id="mood-focus">
+    <div class="mood-dh"><div class="mood-dh-title">03 — <em>Focus</em></div><button class="mood-back" onclick="closeMood()">← Back to moods</button></div>
+    <div class="mood-phil"><div class="mood-phil-text">Some days you don't need fire — you need clarity. Focus sessions are built around quality of movement over quantity of effort. <strong>Slow down, feel every rep, and leave knowing you did exactly what you came to do.</strong></div></div>
+    <div class="mood-body">
+      <div class="mood-workout">
+        <div class="col-lbl">15 sessions — all categories</div>
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Pull E · Unilateral Focus<small>Single arm: cable row · lat pulldown · DB row · face pull · concentration curl · hammer curl — all 4×12/side</small></div></li>
+          <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Legs · Posterior Chain Controlled<small>RDL 4×8 slow · Hip thrust 4×10 squeeze · Leg curl 4×12 3s ecc · Good morning 3×10 · Calf 4×15</small></div></li>
+          <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">HYROX · Sled Density Builder<small>5 rounds: 100m run · 25m sled push · 25m sled pull · 10 push-ups · 10 sandbag cleans</small></div></li>
+          <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">HYROX · Circuit Base<small>3 rounds: 500m ski · 20 burpees · 500m run · 25m sled push · 500m row · 30 WB</small></div></li>
+          <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Push · Tempo Controlled<small>Incline bar 4×8 3-1-2 · Flat DB 4×10 · Cable fly 3×12 · DB press 3×10 · Lateral 4×15 · Pushdown 3×15</small></div></li>
+          <li class="ex-item"><span class="ex-num">06</span><div class="ex-name">Pull · Tempo Controlled<small>Wide pulldown 4×10 3-1-2 · Cable row 4×12 · Single arm row 3×10 · Face pull 3×15 · Incline curl 3×12</small></div></li>
+          <li class="ex-item"><span class="ex-num">07</span><div class="ex-name">Legs · Quad Precision<small>Front squat 4×6 3-1-1 · Leg press slow 4×12 · Bulgarian 3×10/leg · Leg ext 4×15 · Calf 4×15</small></div></li>
+          <li class="ex-item"><span class="ex-num">08</span><div class="ex-name">10K D · Tempo Sustained<small>WU + 5km comfortably hard · Cool down</small></div></li>
+          <li class="ex-item"><span class="ex-num">09</span><div class="ex-name">10K A · Long Easy<small>WU + 8km zone 2 conversation pace · Cool down</small></div></li>
+          <li class="ex-item"><span class="ex-num">10</span><div class="ex-name">10K E · Negative Split<small>WU + 10km — first 5 easy · second 5 faster each km · Cool down</small></div></li>
+          <li class="ex-item"><span class="ex-num">11</span><div class="ex-name">5K C · 400m Repeats<small>WU + 8×400m fast · 90s full rest · Cool down</small></div></li>
+          <li class="ex-item"><span class="ex-num">12</span><div class="ex-name">5K D · Fartlek Free<small>WU + 30–40 min no GPS · hard and easy by feel · Cool down</small></div></li>
+          <li class="ex-item"><span class="ex-num">13</span><div class="ex-name">Push &amp; Pull Superset Day<small>SS A: Bench+Row · SS B: OHP+Pulldown · SS C: Fly+Straight arm · Finisher: Curl+Pushdown</small></div></li>
+          <li class="ex-item"><span class="ex-num">14</span><div class="ex-name">HYROX · Every 4 Min Controlled<small>6 rounds: 250m ski · 10 WB · 10 burpee broad · Max cal row · Same output every round</small></div></li>
+          <li class="ex-item"><span class="ex-num">15</span><div class="ex-name">Upper Body Isolation<small>Incline curl 4×12 · Concentration curl 3×12 · Pushdown 4×15 · OH tricep 3×12 · Lateral 4×15 · Rear delt 4×15 · Face pull 3×15</small></div></li>
+        </ul>
+      </div>
+      <div class="mood-music">
+        <div class="col-lbl">Music · Deep focus</div>
+        <div class="music-desc">Minimal techno. Repetitive, hypnotic. Fades into the background so your mind can lock onto the lift.</div>
+        <a class="spotify-btn" href="https://open.spotify.com/playlist/2HTKIt3W1xGVmJsVtpFABc?si=f4476dc3414a46bd" target="_blank">Open playlist on Spotify →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 40% -->
+  <div class="mood-detail" id="mood-forty">
+    <div class="mood-dh"><div class="mood-dh-title">04 — <em>40%</em></div><button class="mood-back" onclick="closeMood()">← Back to moods</button></div>
+    <div class="mood-phil"><div class="mood-phil-text">I've had more 40% days than I can count. Bad sleep, long shift, body just not there. The trick I learned: don't negotiate with yourself before you go. Just go. <strong>Give 100% of your 40%. That's always enough.</strong></div></div>
+    <div class="mood-body">
+      <div class="mood-workout">
+        <div class="col-lbl">15 sessions — no pressure</div>
+        <div class="card-note" style="margin-bottom:20px;"><div class="note-lbl">The rule of 40%</div><div class="note-text">If any exercise feels like more than 60% effort — lower the weight. The goal is not to perform. The goal is to move and go home better than you arrived.</div></div>
+        <ul class="ex-list">
+          <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Full Body Light<small>You showed up. That's the hardest part. Now just move. — Goblet squat 3×15 · DB row 3×12 · Push-up 3×15 · Hip thrust band 3×15 · Farmer carry 3×30m · Face pull 3×15</small></div></li>
+          <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Upper Body Easy<small>No heavy lifting today. — Machine chest 3×15 · Lat pulldown light 3×15 · Seated row light 3×15 · DB lateral 3×15 · DB curl light 3×15 · Pushdown light 3×15</small></div></li>
+          <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Lower Body Easy<small>Legs are tired. That's fine. — Leg press light 3×15 · BW squat 3×20 · Hip thrust BW 3×15 · Leg ext light 3×15 · Calf light 3×20</small></div></li>
+          <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">Zone 1 Easy Jog<small>Sometimes the best decision is to go slow. — 10 min walk WU · 20–25 min zone 1 no watch · 10 min walk CD</small></div></li>
+          <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Machine Day<small>Let the machines do the work. — Machine chest 3×12 · Machine shoulder 3×12 · Lat pulldown 3×12 · Leg press light 3×15 · Leg curl light 3×15</small></div></li>
+          <li class="ex-item"><span class="ex-num">06</span><div class="ex-name">Bodyweight Only<small>No equipment, no excuses. — Push-up 3×15 · BW squat 3×20 · Hip thrust BW 3×20 · Plank 3×30–45s · BW lunge 3×12 · BW row 3×10</small></div></li>
+          <li class="ex-item"><span class="ex-num">07</span><div class="ex-name">Core &amp; Carry<small>Simple. Done in 30 min. Go home and eat. — Plank 3×40s · Dead bug 3×10 · Pallof press 3×12 · Farmer carry light 3×30m · Hip thrust band 3×15 · Face pull 3×15</small></div></li>
+          <li class="ex-item"><span class="ex-num">08</span><div class="ex-name">Stretch &amp; Lift<small>Half stretching, half lifting. All recovery. — Goblet squat 3×15 · Single arm row light 3×12 · Lateral light 3×15 · Leg press light 3×15 · Calf light 3×20 · Plank 3×30s</small></div></li>
+          <li class="ex-item"><span class="ex-num">09</span><div class="ex-name">Pull Day Light<small>Back and biceps. Just feel the muscle. — Pulldown light 3×15 · Seated row light 3×15 · Face pull 3×15 · DB curl light 3×15 · Hammer curl light 3×15</small></div></li>
+          <li class="ex-item"><span class="ex-num">10</span><div class="ex-name">Push Day Light<small>Chest and shoulders. Easy version. — Machine chest 3×15 · DB shoulder light 3×12 · Lateral light 3×15 · Push-up 3×10 · Pushdown light 3×15</small></div></li>
+          <li class="ex-item"><span class="ex-num">11</span><div class="ex-name">Legs Light<small>Light legs. No soreness tomorrow. — Goblet squat 3×15 · Hip thrust band 3×15 · Leg press light 3×15 · Leg curl light 3×15 · Calf BW 3×20</small></div></li>
+          <li class="ex-item"><span class="ex-num">12</span><div class="ex-name">Easy Short Run<small>Not every run has to be a workout. — 10 min walk · 20 min zone 1 · 10 min walk</small></div></li>
+          <li class="ex-item"><span class="ex-num">13</span><div class="ex-name">Upper Light Supersets<small>Supersets but easy. — SS A: Push-up 10 + Pulldown 12 · SS B: Curl light 12 + Pushdown 12 · SS C: Lateral 15 + Face pull 15</small></div></li>
+          <li class="ex-item"><span class="ex-num">14</span><div class="ex-name">HYROX Easy<small>HYROX at 40% effort. 2 easy rounds no timer. — Ski 250m easy · 10 WB light · Sled push 20m very light · 6 burpees · Farmer carry 20m light</small></div></li>
+          <li class="ex-item"><span class="ex-num">15</span><div class="ex-name">Mobility &amp; Move<small>This is training too. — Foam roller 5 min · Hip flexor 2×60s · Goblet squat 3×15 · Farmer carry 3×30m · Face pull 3×15 · Plank 3×30s</small></div></li>
+        </ul>
+      </div>
+      <div class="mood-music">
+        <div class="col-lbl">Music · Carry you through</div>
+        <div class="music-desc">Melodic deep house. Something that carries you without pushing you. Let it do the work your legs don't want to do.</div>
+        <a class="spotify-btn" href="https://open.spotify.com/playlist/3df3nco0omIik0IZwsEJpi?si=092992a720164ee5" target="_blank">Open playlist on Spotify →</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ═══════════════════════════════
+     GLOSSARY
+═══════════════════════════════ -->
+<div class="section" id="section-glossary">
+
+  <div class="section-intro">
+    <div class="big-title">Glossary</div>
+    <p class="intro-sub" style="margin-top:20px;">Terms used throughout this programme — if something was unclear, find it here.</p>
+  </div>
+
+  <!-- GLOSSARY -->
+  <div style="padding:48px 56px 64px;">
+    <table class="glossary-table">
+      <thead><tr><th>Term</th><th>What it means</th></tr></thead>
+      <tbody>
+        <tr><td>AMRAP</td><td>As Many Rounds As Possible. Set a timer, do as many complete rounds as you can. Stop when time is up.</td></tr>
+        <tr><td>Cluster set</td><td>Break one set into mini-sets with short intra-set rest. Example: 6 reps, 10 seconds rest, 6 reps, 10 seconds rest, 6 reps. Lets you use more weight than a straight set.</td></tr>
+        <tr><td>Compromised run</td><td>Running while already fatigued from another exercise — exactly what HYROX requires. Builds the ability to maintain pace under fatigue.</td></tr>
+        <tr><td>Deload</td><td>A planned reduction in training volume and intensity (usually 60% load). Allows your nervous system and muscles to recover and consolidate adaptations.</td></tr>
+        <tr><td>Density superset</td><td>Two exercises performed back to back with minimal rest. Creates more work in less time without increasing session length.</td></tr>
+        <tr><td>Eccentric overload</td><td>Slowing down the lowering phase of a movement. Example: 5 seconds down on bench press. Creates more muscle damage and drives hypertrophy.</td></tr>
+        <tr><td>EMOM</td><td>Every Minute On the Minute. Start a set at the top of each minute. Rest for whatever time is left before the next minute begins.</td></tr>
+        <tr><td>FOR TIME</td><td>Complete all prescribed work as fast as possible. Record your time. Your score is how long it took.</td></tr>
+        <tr><td>RPE</td><td>Rate of Perceived Exertion. Scale of 1–10. RPE 7 = hard but sustainable. RPE 9 = near maximum. RPE 10 = absolute maximum.</td></tr>
+        <tr><td>Superset</td><td>Two exercises performed back to back before resting. Can be same muscle group (pump) or opposing groups (efficiency).</td></tr>
+        <tr><td>Tempo (3-1-1)</td><td>Controls the speed of each phase. First number = eccentric (lowering), second = pause, third = concentric (lifting). 3-1-1 = 3s down, 1s pause, 1s up.</td></tr>
+        <tr><td>Threshold pace</td><td>The pace you can sustain for approximately 60 minutes at maximum effort. Your reference threshold is 4:08/km.</td></tr>
+        <tr><td>Zone 2</td><td>Aerobic training zone where you can hold a full conversation. Builds your aerobic base — the foundation of all endurance performance.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+
+<footer class="site-footer">
+  <div class="footer-copy">@ormazaaes · Hybrid Athlete · Byron Bay, Australia</div>
+  <div class="footer-copy">Updated weekly · Free forever</div>
+</footer>
+
+
+<script>
+function switchTab(tab, btn) {
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('section-' + tab).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function switchWeek(week, btn) {
+  const parent = btn.closest('.section');
+  parent.querySelectorAll('.scroll-btn').forEach(b => b.classList.remove('active'));
+  parent.querySelectorAll(':scope > .sub-content').forEach(w => w.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(week).classList.add('active');
+}
+
+function switchRun(id, btn) {
+  const nav = btn.closest('.scroll-nav');
+  nav.querySelectorAll('.scroll-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  ['r10ka','r10kb','r5ka','r5kb'].forEach(rid => {
+    const el = document.getElementById(rid);
+    if (el) el.classList.remove('active');
+  });
+  document.getElementById(id).classList.add('active');
+}
+
+function tog(btn) {
+  const body = btn.nextElementSibling;
+  const arrow = btn.querySelector('.tog-arrow');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
+  btn.querySelector('span:first-child').textContent = isOpen ? 'See exercises' : 'Hide exercises';
+}
+
+function filterFree(btn) {
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const cat = btn.dataset.cat;
+  document.querySelectorAll('.free-card').forEach(card => {
+    card.classList.toggle('hidden', cat !== 'all' && card.dataset.cat !== cat);
+  });
+}
+
+function openMood(mood) {
+  document.querySelectorAll('.mood-detail').forEach(d => d.classList.remove('visible'));
+  const detail = document.getElementById('mood-' + mood);
+  detail.classList.add('visible');
+  detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function closeMood() {
+  document.querySelectorAll('.mood-detail').forEach(d => d.classList.remove('visible'));
+  document.querySelector('.mood-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Train by Mood — @ormazaaes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --cream: #f2ede4;
+  --cream2: #e8e2d7;
+  --ink: #1a1a16;
+  --ink2: #3a3a32;
+  --muted: #8a8a78;
+  --green: #2c4a2e;
+  --green2: #3d6b40;
+  --green-lt: #e8f0e8;
+  --rule: #c8c0b0;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.6;
+}
+
+/* MAIN SCREEN */
+.main-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: opacity 0.4s ease;
+}
+.main-screen.hidden {
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+}
+
+/* HEADER */
+.site-header {
+  padding: 36px 56px 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.site-wordmark {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.site-handle {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+}
+
+/* HERO */
+.hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 56px 56px 16px;
+  text-align: center;
+}
+.hero-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 24px;
+}
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(52px, 10vw, 96px);
+  font-weight: 300;
+  line-height: 0.92;
+  letter-spacing: -0.01em;
+  margin-bottom: 28px;
+  color: var(--ink);
+}
+.hero-title em { font-style: italic; color: var(--green); }
+.hero-rule { width: 48px; height: 1px; background: var(--rule); margin: 0 auto 24px; }
+.hero-sub {
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.7;
+  color: var(--ink2);
+  max-width: 440px;
+}
+
+/* MOOD GRID */
+.mood-section { padding: 40px 56px 60px; }
+.mood-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: center;
+  margin-bottom: 28px;
+}
+.mood-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.mood-card {
+  position: relative;
+  background: var(--cream2);
+  border: 1px solid var(--rule);
+  padding: 36px 24px 32px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-align: center;
+  overflow: hidden;
+}
+.mood-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--green);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.mood-card:hover::before { opacity: 1; }
+.mood-card:hover .mood-number,
+.mood-card:hover .mood-name,
+.mood-card:hover .mood-desc { color: var(--cream); }
+.mood-card:hover .mood-name-line { background: rgba(242,237,228,0.3); }
+.mood-number {
+  position: relative;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  margin-bottom: 14px;
+  transition: color 0.25s;
+}
+.mood-name {
+  position: relative;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 30px;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--ink);
+  margin-bottom: 6px;
+  transition: color 0.25s;
+}
+.mood-name-line {
+  position: relative;
+  width: 20px;
+  height: 1px;
+  background: var(--rule);
+  margin: 12px auto;
+  transition: background 0.25s;
+}
+.mood-desc {
+  position: relative;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+  transition: color 0.25s;
+}
+
+/* FOOTER */
+.site-footer {
+  padding: 28px 56px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.footer-copy {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+
+/* MOOD FULLSCREEN */
+.mood-screen {
+  position: fixed;
+  inset: 0;
+  background: var(--cream);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(16px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.mood-screen.visible {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0);
+}
+
+/* MOOD SCREEN HEADER */
+.ms-header {
+  padding: 32px 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--rule);
+  position: sticky;
+  top: 0;
+  background: var(--cream);
+  z-index: 10;
+}
+.ms-back {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: color 0.2s;
+  background: none;
+  border: none;
+}
+.ms-back:hover { color: var(--ink); }
+.ms-mood-tag {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--muted);
+}
+
+/* MOOD HERO */
+.ms-hero {
+  padding: 56px 56px 44px;
+  border-bottom: 1px solid var(--rule);
+}
+.ms-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 18px;
+}
+.ms-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(44px, 7vw, 72px);
+  font-weight: 300;
+  line-height: 0.92;
+  margin-bottom: 20px;
+  color: var(--ink);
+}
+.ms-title em { font-style: italic; color: var(--green); }
+.ms-philosophy {
+  font-size: 15px;
+  color: var(--ink2);
+  max-width: 560px;
+  line-height: 1.7;
+  font-weight: 300;
+}
+.ms-philosophy strong { font-weight: 600; color: var(--green); }
+
+/* TWO COL */
+.ms-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 0;
+}
+
+/* WORKOUT SIDE */
+.ms-workout {
+  padding: 44px 56px 60px;
+  border-right: 1px solid var(--rule);
+}
+.ms-section-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.ms-section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+
+/* EXERCISE LIST */
+.ex-list { list-style: none; }
+.ex-item {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 14px;
+  align-items: baseline;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.ex-item:last-child { border-bottom: none; }
+.ex-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+.ex-name {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.3;
+}
+.ex-name small {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* NOTE */
+.workout-note {
+  margin-top: 28px;
+  padding: 18px 20px;
+  border: none;
+  background: var(--green-lt);
+  border-left: 2px solid var(--green);
+}
+.workout-note-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.workout-note-text {
+  font-size: 13px;
+  color: var(--green);
+  line-height: 1.6;
+}
+
+/* MUSIC SIDE */
+.ms-music {
+  padding: 44px 56px 60px;
+  background: var(--cream2);
+}
+.music-desc {
+  font-size: 15px;
+  color: var(--ink2);
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+.spotify-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--green);
+  color: var(--cream);
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 11px 22px;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.spotify-pill:hover { background: var(--green2); }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .site-header { padding: 24px; }
+  .hero { padding: 36px 24px 12px; }
+  .mood-section { padding: 28px 24px 44px; }
+  .mood-grid { grid-template-columns: repeat(2, 1fr); }
+  .mood-card { padding: 24px 16px 20px; }
+  .site-footer { padding: 20px; flex-direction: column; gap: 8px; text-align: center; }
+  .ms-header { padding: 20px; }
+  .ms-hero { padding: 36px 20px 28px; }
+  .ms-body { grid-template-columns: 1fr; }
+  .ms-workout { padding: 28px 20px 36px; border-right: none; border-bottom: 1px solid var(--rule); }
+  .ms-music { padding: 28px 20px 44px; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- MAIN SCREEN -->
+<div class="main-screen" id="main-screen">
+  <header class="site-header">
+    <div class="site-wordmark">Train by Mood</div>
+    <div class="site-handle">@ormazaaes</div>
+  </header>
+
+  <div class="hero">
+    <div class="hero-eyebrow">Byron Bay · Hybrid Athlete</div>
+    <h1 class="hero-title">How do you<br>feel <em>today?</em></h1>
+    <div class="hero-rule"></div>
+    <p class="hero-sub">Your mood decides your session. Your session decides your music.</p>
+  </div>
+
+  <div class="mood-section">
+    <div class="mood-label">Select your mood</div>
+    <div class="mood-grid">
+      <div class="mood-card" onclick="openMood('savage')">
+        <div class="mood-number">01</div>
+        <div class="mood-name">Savage</div>
+        <div class="mood-name-line"></div>
+        <div class="mood-desc">Nothing can stop you today</div>
+      </div>
+      <div class="mood-card" onclick="openMood('flow')">
+        <div class="mood-number">02</div>
+        <div class="mood-name">Flow</div>
+        <div class="mood-name-line"></div>
+        <div class="mood-desc">Energy is high. Rhythm is there.</div>
+      </div>
+      <div class="mood-card" onclick="openMood('focus')">
+        <div class="mood-number">03</div>
+        <div class="mood-name">Focus</div>
+        <div class="mood-name-line"></div>
+        <div class="mood-desc">Locked in. Train with precision.</div>
+      </div>
+      <div class="mood-card" onclick="openMood('forty')">
+        <div class="mood-number">04</div>
+        <div class="mood-name">40%</div>
+        <div class="mood-name-line"></div>
+        <div class="mood-desc">Didn't want to come. But you're here.</div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-copy">Updated weekly · Free forever</div>
+    <div class="footer-copy">@ormazaaes · Byron Bay</div>
+  </footer>
+</div>
+
+
+<!-- ══════════ SAVAGE ══════════ -->
+<div class="mood-screen" id="screen-savage">
+  <div class="ms-header">
+    <button class="ms-back" onclick="closeMood()">← Back</button>
+    <span class="ms-mood-tag">01 — Savage</span>
+  </div>
+  <div class="ms-hero">
+    <div class="ms-eyebrow">Today's session</div>
+    <h2 class="ms-title">Go <em>all in.</em><br>No limits.</h2>
+    <p class="ms-philosophy">These are the sessions I save for the days I walk into the gym and don't want to talk to anyone. Head down, headphones in, full gas. <strong>Pick one and don't leave until it's done.</strong></p>
+  </div>
+  <div class="ms-body">
+    <div class="ms-workout">
+      <div class="ms-section-label">15 sessions · Pick one</div>
+      <ul class="ex-list">
+        <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Push A · Heavy & Simple<small>Flat bench 5×5 · OHP 4×6 · Incline DB 4×8 · Lateral cable 4×12 · Dips 4×10 · OH tricep 3×12</small></div></li>
+        <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Push E · Eccentric Overload<small>Flat DB 5×6 tempo 5-1-1 · Incline bar 4×6 · Cable fly 3×12 · Lateral raise 4×12 · Tricep OH 4×10</small></div></li>
+        <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Pull D · Straight Sets Heavy<small>Deadlift 5×4 · Pull-up 5×5 · Row 4×6 · Face pull 4×15 · Barbell curl 4×8</small></div></li>
+        <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">Legs E · Heavy Lower Compound<small>Squat 5×4 · Deadlift 4×4 · Hip thrust 4×8 · Leg curl 3×10 · Calf raise 4×12</small></div></li>
+        <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Legs B · Posterior Chain<small>RDL 5×6 · Hip thrust 5×8 · Sumo DL 4×6 · Leg curl 4×12 · Good morning 3×10 · Calf 4×15</small></div></li>
+        <li class="ex-item"><span class="ex-num">06</span><div class="ex-name">HYROX · Descending Ladder<small>1km+50WB · 800m+40KB · 600m+30burp · 400m+20thrust · 200m+10box · For time</small></div></li>
+        <li class="ex-item"><span class="ex-num">07</span><div class="ex-name">HYROX · Strength Focus<small>Thrusters 5×5 · Suitcase DL 5×5 · Back squat 5×5 · All as heavy as possible</small></div></li>
+        <li class="ex-item"><span class="ex-num">08</span><div class="ex-name">HYROX · Every 2 Minutes · 40 min<small>10 burpees · 15 wall balls · Max row · Score: total meters</small></div></li>
+        <li class="ex-item"><span class="ex-num">09</span><div class="ex-name">5K E · 800m Power<small>WU + 6×800m hard · 2 min jog between · Cool down</small></div></li>
+        <li class="ex-item"><span class="ex-num">10</span><div class="ex-name">5K F · Pyramid<small>200–400–600–800–600–400–200m hard · rest = rep time</small></div></li>
+        <li class="ex-item"><span class="ex-num">11</span><div class="ex-name">Full Upper Heavy<small>Bench 5×5 · Pull-up 5×5 · OHP 4×5 · Pendlay row 4×5 · Dips 3×8 · Curl 3×8</small></div></li>
+        <li class="ex-item"><span class="ex-num">12</span><div class="ex-name">HYROX · Sled & Run Power<small>Sled push 6×25m · Sled pull 6×25m · 1km race pace · Repeat lighter · Farmer carry 4×40m</small></div></li>
+        <li class="ex-item"><span class="ex-num">13</span><div class="ex-name">Lower Body Power<small>Squat 6×3 at 85%+ · Power clean 5×3 · Box jump 5×5 · RDL 4×6 · Hip thrust 4×8</small></div></li>
+        <li class="ex-item"><span class="ex-num">14</span><div class="ex-name">10K C · Threshold Intervals<small>WU + 5×1,000m at threshold · 3 min jog between · Cool down</small></div></li>
+        <li class="ex-item"><span class="ex-num">15</span><div class="ex-name">Pull Heavy Peak<small>Row overhand 6×4 · Pull-up 5×4 · Shrug 4×8 · Rack pull 4×5 · Curl 4×6</small></div></li>
+      </ul>
+      <div class="workout-note">
+        <div class="workout-note-label">Note</div>
+        <div class="workout-note-text">Days like this don't come every week. When they do — use them. Go heavy, don't pace yourself, leave nothing behind.</div>
+      </div>
+    </div>
+    <div class="ms-music">
+      <div class="ms-section-label">Music</div>
+      <p class="music-desc">Hard techno. High BPM. No melody — just pressure. The kind that makes the heavy sets feel light.</p>
+      <a class="spotify-pill" href="https://open.spotify.com/playlist/5Eh9JBrgaYcljxNlqoUOyP?si=54c85b5305c444c0" target="_blank">Open playlist on Spotify →</a>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════ FLOW ══════════ -->
+<div class="mood-screen" id="screen-flow">
+  <div class="ms-header">
+    <button class="ms-back" onclick="closeMood()">← Back</button>
+    <span class="ms-mood-tag">02 — Flow</span>
+  </div>
+  <div class="ms-hero">
+    <div class="ms-eyebrow">Today's session</div>
+    <h2 class="ms-title">Move <em>well.</em><br>Find the rhythm.</h2>
+    <p class="ms-philosophy">Flow days are my favourite. The music is right, the body feels good, and the session just happens. <strong>Not your best ever — but close. Pick something and let it run.</strong></p>
+  </div>
+  <div class="ms-body">
+    <div class="ms-workout">
+      <div class="ms-section-label">15 sessions · Pick one</div>
+      <ul class="ex-list">
+        <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Push B · Volume Pump<small>Incline bar 4×12 · Flat DB 4×12 · Pec deck 3×15 · Lateral machine 4×15 · Front raise 3×12 · Pushdown 4×15 · Kickback 3×15</small></div></li>
+        <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Push C · Supersets Only<small>SS A: Flat press 10 + Push-up fail · SS B: DB shoulder 12 + Lateral 15 · SS C: Cable cross 15 + Diamond fail</small></div></li>
+        <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Push D · Shoulders Focus<small>DB press 5×8 · Arnold 4×10 · Lateral cable 5×15 · Rear delt 4×15 · Upright row 3×12 · Incline DB 3×12 · Pushdown 3×15</small></div></li>
+        <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">Pull A · Thickness Builder<small>Row 5×6 · Pull-up 4×6 · Seated row 4×10 · Chest supported 3×12 · Face pull 3×15 · Hammer curl 3×12</small></div></li>
+        <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Pull B · Width & Detail<small>Wide pulldown 5×10 · Single arm row 4×10 · Straight arm 4×15 · Wide row 3×12 · Rear delt fly 3×15 · EZ curl 4×12</small></div></li>
+        <li class="ex-item"><span class="ex-num">06</span><div class="ex-name">Pull C · Cluster & Density<small>Pendlay 5×5 · Pull-up 4×5 · Pulldown+pullover SS · T-bar+face pull SS · Bicep clusters</small></div></li>
+        <li class="ex-item"><span class="ex-num">07</span><div class="ex-name">Legs A · Quad Dominant<small>Squat 5×5 · Leg press 4×10 · Bulgarian SS 4×10 · Leg ext 4×15 · Lunge 3×12 · Calf 4×15</small></div></li>
+        <li class="ex-item"><span class="ex-num">08</span><div class="ex-name">Legs C · Unilateral Strength<small>Front squat 4×6 · Bulgarian bar 4×8 · Step-up 4×10 · Unilateral hip thrust 3×12 · SL press 3×12 · SL calf 4×15</small></div></li>
+        <li class="ex-item"><span class="ex-num">09</span><div class="ex-name">Legs D · Volume & Pump<small>Squat 4×12 · Leg press high 4×15 · Hack squat 3×12 · Ext 4×20 · Seated curl 4×15 · Lunge BW 3×20 · Calf 5×20</small></div></li>
+        <li class="ex-item"><span class="ex-num">10</span><div class="ex-name">HYROX · Machine Conditioning<small>3 rounds: 1km row · 1km ski erg · 500m run · For time</small></div></li>
+        <li class="ex-item"><span class="ex-num">11</span><div class="ex-name">HYROX · Every 4 Minutes<small>6 rounds: 250m ski · 10 WB · 10 burpee broad · Max cal row · Score: total cal</small></div></li>
+        <li class="ex-item"><span class="ex-num">12</span><div class="ex-name">HYROX · AMRAP 30 Aerobic<small>1km run · 50m sled pull · 50m farmer carry · 25 BW lunges · Score: rounds</small></div></li>
+        <li class="ex-item"><span class="ex-num">13</span><div class="ex-name">10K B · Progressive Long<small>WU + 3km easy → 3km mod → 2km hard · Cool down</small></div></li>
+        <li class="ex-item"><span class="ex-num">14</span><div class="ex-name">10K F · Cruise Intervals<small>WU + 4×2km moderate-hard · 2 min jog between · Cool down</small></div></li>
+        <li class="ex-item"><span class="ex-num">15</span><div class="ex-name">5K A · Speed Base 200s<small>WU + 10×200m fast · 60s full rest · Cool down</small></div></li>
+      </ul>
+      <div class="workout-note">
+        <div class="workout-note-label">Note</div>
+        <div class="workout-note-text">Flow days are where consistency is built. Not too heavy, not too easy. Find your rhythm and stay in it the whole session.</div>
+      </div>
+    </div>
+    <div class="ms-music">
+      <div class="ms-section-label">Music</div>
+      <p class="music-desc">Deep house. Progressive builds. The kind that carries you through the session without you noticing.</p>
+      <a class="spotify-pill" href="https://open.spotify.com/playlist/7fYnagGaQ3kLRQdDjJEH1V?si=cebe96460c444d03" target="_blank">Open playlist on Spotify →</a>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════ FOCUS ══════════ -->
+<div class="mood-screen" id="screen-focus">
+  <div class="ms-header">
+    <button class="ms-back" onclick="closeMood()">← Back</button>
+    <span class="ms-mood-tag">03 — Focus</span>
+  </div>
+  <div class="ms-hero">
+    <div class="ms-eyebrow">Today's session</div>
+    <h2 class="ms-title">Head down.<br><em>Pure strength.</em></h2>
+    <p class="ms-philosophy">Some days you don't need fire — you need clarity. Focus sessions are built around quality of movement over quantity of effort. <strong>Slow down, feel every rep, leave knowing you did exactly what you came to do.</strong></p>
+  </div>
+  <div class="ms-body">
+    <div class="ms-workout">
+      <div class="ms-section-label">15 sessions · Pick one</div>
+      <ul class="ex-list">
+        <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Pull E · Unilateral Focus<small>Single arm: cable row · lat pulldown · DB row · face pull · concentration curl · hammer curl — all 4×12/side</small></div></li>
+        <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Legs · Posterior Chain Controlled<small>RDL 4×8 slow · Hip thrust 4×10 squeeze · Leg curl 4×12 3s ecc · Good morning 3×10 · Calf 4×15</small></div></li>
+        <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">HYROX · Sled Density Builder<small>5 rounds: 100m run · 25m sled push · 25m sled pull · 10 push-ups · 10 sandbag cleans</small></div></li>
+        <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">HYROX · Circuit Base<small>3 rounds: 500m ski · 20 burpees · 500m run · 25m sled push · 500m row · 30 WB · For time</small></div></li>
+        <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Push · Tempo Controlled<small>Incline bar 4×8 3-1-2 · Flat DB 4×10 · Cable fly 3×12 · DB press 3×10 · Lateral 4×15 · Pushdown 3×15</small></div></li>
+        <li class="ex-item"><span class="ex-num">06</span><div class="ex-name">Pull · Tempo Controlled<small>Wide pulldown 4×10 3-1-2 · Cable row 4×12 · Single arm row 3×10 · Face pull 3×15 · Incline curl 3×12</small></div></li>
+        <li class="ex-item"><span class="ex-num">07</span><div class="ex-name">Legs · Quad Precision<small>Front squat 4×6 3-1-1 · Leg press slow 4×12 · Bulgarian 3×10/leg · Leg ext 4×15 · Calf 4×15</small></div></li>
+        <li class="ex-item"><span class="ex-num">08</span><div class="ex-name">10K D · Tempo Sustained<small>WU + 5km comfortably hard · Cool down</small></div></li>
+        <li class="ex-item"><span class="ex-num">09</span><div class="ex-name">10K A · Long Easy<small>WU + 8km zone 2 conversation pace · Cool down</small></div></li>
+        <li class="ex-item"><span class="ex-num">10</span><div class="ex-name">10K E · Negative Split<small>WU + 10km — first 5 easy · second 5 faster each km · Cool down</small></div></li>
+        <li class="ex-item"><span class="ex-num">11</span><div class="ex-name">5K C · 400m Repeats<small>WU + 8×400m fast · 90s full rest · Cool down</small></div></li>
+        <li class="ex-item"><span class="ex-num">12</span><div class="ex-name">5K D · Fartlek Free<small>WU + 30–40 min no GPS · hard and easy by feel · Cool down</small></div></li>
+        <li class="ex-item"><span class="ex-num">13</span><div class="ex-name">Push & Pull Superset Day<small>SS A: Bench+Row · SS B: OHP+Pulldown · SS C: Fly+Straight arm · Finisher: Curl+Pushdown</small></div></li>
+        <li class="ex-item"><span class="ex-num">14</span><div class="ex-name">HYROX · Every 4 Min Controlled<small>6 rounds: 250m ski · 10 WB · 10 burpee broad · Max cal row · Same output every round</small></div></li>
+        <li class="ex-item"><span class="ex-num">15</span><div class="ex-name">Upper Body Isolation<small>Incline curl 4×12 · Concentration curl 3×12 · Pushdown 4×15 · OH tricep 3×12 · Lateral 4×15 · Rear delt 4×15 · Face pull 3×15</small></div></li>
+      </ul>
+      <div class="workout-note">
+        <div class="workout-note-label">Note</div>
+        <div class="workout-note-text">Focus days are not about going hard. They're about going deep. Take every rest fully. Log your weights. This is the session where you get stronger — quietly.</div>
+      </div>
+    </div>
+    <div class="ms-music">
+      <div class="ms-section-label">Music</div>
+      <p class="music-desc">Minimal techno. Repetitive, hypnotic. Fades into the background so your mind can lock onto the lift.</p>
+      <a class="spotify-pill" href="https://open.spotify.com/playlist/2HTKIt3W1xGVmJsVtpFABc?si=f4476dc3414a46bd" target="_blank">Open playlist on Spotify →</a>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════ 40% ══════════ -->
+<div class="mood-screen" id="screen-forty">
+  <div class="ms-header">
+    <button class="ms-back" onclick="closeMood()">← Back</button>
+    <span class="ms-mood-tag">04 — 40%</span>
+  </div>
+  <div class="ms-hero">
+    <div class="ms-eyebrow">Today's session</div>
+    <h2 class="ms-title">You didn't want<br>to come. <em>But you're here.</em></h2>
+    <p class="ms-philosophy">I've had more 40% days than I can count. Bad sleep, long shift, body just not there. The trick I learned: don't negotiate with yourself before you go. Just go. <strong>Give 100% of your 40%. That's always enough.</strong></p>
+  </div>
+  <div class="ms-body">
+    <div class="ms-workout">
+      <div class="ms-section-label">15 sessions · No pressure</div>
+      <ul class="ex-list">
+        <li class="ex-item"><span class="ex-num">01</span><div class="ex-name">Full Body Light<small>Goblet squat 3×15 · DB row 3×12 · Push-up 3×15 · Hip thrust band 3×15 · Farmer carry 3×30m · Face pull 3×15</small></div></li>
+        <li class="ex-item"><span class="ex-num">02</span><div class="ex-name">Upper Body Easy<small>Machine chest 3×15 · Lat pulldown light 3×15 · Seated row light 3×15 · DB lateral 3×15 · DB curl light 3×15 · Pushdown light 3×15</small></div></li>
+        <li class="ex-item"><span class="ex-num">03</span><div class="ex-name">Lower Body Easy<small>Leg press light 3×15 · BW squat 3×20 · Hip thrust BW 3×15 · Leg ext light 3×15 · Calf light 3×20</small></div></li>
+        <li class="ex-item"><span class="ex-num">04</span><div class="ex-name">Zone 1 Easy Jog<small>10 min walk · 20–25 min zone 1 no watch · 10 min walk</small></div></li>
+        <li class="ex-item"><span class="ex-num">05</span><div class="ex-name">Machine Day<small>Machine chest 3×12 · Machine shoulder 3×12 · Lat pulldown 3×12 · Leg press light 3×15 · Leg curl light 3×15</small></div></li>
+        <li class="ex-item"><span class="ex-num">06</span><div class="ex-name">Bodyweight Only<small>Push-up 3×15 · BW squat 3×20 · Hip thrust BW 3×20 · Plank 3×30–45s · BW lunge 3×12 · BW row 3×10</small></div></li>
+        <li class="ex-item"><span class="ex-num">07</span><div class="ex-name">Core & Carry<small>Plank 3×40s · Dead bug 3×10 · Pallof press 3×12 · Farmer carry light 3×30m · Hip thrust band 3×15 · Face pull 3×15</small></div></li>
+        <li class="ex-item"><span class="ex-num">08</span><div class="ex-name">Stretch & Lift<small>Goblet squat 3×15 · Single arm row light 3×12 · Lateral light 3×15 · Leg press light 3×15 · Calf light 3×20 · Plank 3×30s</small></div></li>
+        <li class="ex-item"><span class="ex-num">09</span><div class="ex-name">Pull Day Light<small>Pulldown light 3×15 · Seated row light 3×15 · Face pull 3×15 · DB curl light 3×15 · Hammer curl light 3×15</small></div></li>
+        <li class="ex-item"><span class="ex-num">10</span><div class="ex-name">Push Day Light<small>Machine chest 3×15 · DB shoulder light 3×12 · Lateral light 3×15 · Push-up 3×10 · Pushdown light 3×15</small></div></li>
+        <li class="ex-item"><span class="ex-num">11</span><div class="ex-name">Legs Light<small>Goblet squat 3×15 · Hip thrust band 3×15 · Leg press light 3×15 · Leg curl light 3×15 · Calf BW 3×20</small></div></li>
+        <li class="ex-item"><span class="ex-num">12</span><div class="ex-name">Easy Short Run<small>10 min walk · 20 min zone 1 · 10 min walk</small></div></li>
+        <li class="ex-item"><span class="ex-num">13</span><div class="ex-name">Upper Light Supersets<small>SS A: Push-up 10 + Pulldown 12 · SS B: Curl light 12 + Pushdown 12 · SS C: Lateral 15 + Face pull 15</small></div></li>
+        <li class="ex-item"><span class="ex-num">14</span><div class="ex-name">HYROX Easy<small>2 easy rounds no timer · Ski 250m easy · 10 WB light · Sled push 20m very light · 6 burpees · Farmer carry 20m light</small></div></li>
+        <li class="ex-item"><span class="ex-num">15</span><div class="ex-name">Mobility & Move<small>Foam roller 5 min · Hip flexor 2×60s · Goblet squat 3×15 · Farmer carry 3×30m · Face pull 3×15 · Plank 3×30s</small></div></li>
+      </ul>
+      <div class="workout-note">
+        <div class="workout-note-label">The rule of 40%</div>
+        <div class="workout-note-text">If any exercise feels like more than 60% effort — lower the weight. The goal is not to perform. The goal is to move and go home better than you arrived.</div>
+      </div>
+    </div>
+    <div class="ms-music">
+      <div class="ms-section-label">Music</div>
+      <p class="music-desc">Melodic deep house. Something that carries you without pushing you. Let it do the work your legs don't want to do.</p>
+      <a class="spotify-pill" href="https://open.spotify.com/playlist/3df3nco0omIik0IZwsEJpi?si=092992a720164ee5" target="_blank">Open playlist on Spotify →</a>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  const mainScreen = document.getElementById('main-screen');
+
+  function openMood(mood) {
+    const screen = document.getElementById('screen-' + mood);
+    mainScreen.classList.add('hidden');
+    screen.classList.add('visible');
+    screen.scrollTop = 0;
+  }
+
+  function closeMood() {
+    document.querySelectorAll('.mood-screen').forEach(s => s.classList.remove('visible'));
+    mainScreen.classList.remove('hidden');
+    window.scrollTo(0, 0);
+  }
+</script>
+
+</body>
+</html>
